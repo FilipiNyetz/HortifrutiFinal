@@ -1,0 +1,26 @@
+### Listar UFS
+GET http://localhost:3000/ufs
+
+### Listar uma UF
+GET http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+
+### Criar uma UF
+POST http://localhost:3000/ufs
+Content-Type: application/json
+
+{
+  "sigla": "SP",
+  "nome_do_estado": "São Paulo"
+}
+
+### Atualizar uma UF
+PATCH http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+Content-Type: application/json
+
+{
+  "sigla": "RJ",
+  "nome_do_estado": "Rio de Janeiro"
+}
+
+### Deletar uma UF
+DELETE http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT

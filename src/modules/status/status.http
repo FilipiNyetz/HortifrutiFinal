@@ -1,0 +1,21 @@
+### Listar status
+GET http://localhost:3000/status
+
+### Criar status
+POST http://localhost:3000/status
+Content-Type: application/json
+
+{
+  "estado": "Entregue"
+}
+
+### Atualizar status
+PATCH http://localhost:3000/status/status_Bu9c2vcxG97--2McbGXKY
+Content-Type: application/json
+
+{
+  "estado": "Pronto"
+}
+
+### Deletar status
+DELETE http://localhost:3000/status/status_Bu9c2vcxG97--2McbGXKY
