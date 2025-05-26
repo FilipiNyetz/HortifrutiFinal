@@ -1,0 +1,23 @@
+### Listar categorias
+GET http://localhost:3000/categoria
+
+### Criar categoria
+POST http://localhost:3000/categoria
+Content-Type: application/json
+
+{
+  "nome_categoria": "Categoria Exemplo",
+  "descricao": "Teste"
+}
+
+### Atualizar categoria
+PATCH http://localhost:3000/categoria/cat_qbDj3PRRcMNxjTJo3BqVx
+Content-Type: application/json
+
+{
+  "nome_categoria": "Categoria Atualizada",
+  "descricao": "Teste 2"
+}
+
+### Deletar categoria
+DELETE http://localhost:3000/categoria/cat_qbDj3PRRcMNxjTJo3BqVx

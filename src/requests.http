@@ -1,0 +1,96 @@
+### Listar UFS
+GET http://localhost:3000/ufs
+
+### Listar uma UF
+GET http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+
+### Criar uma UF
+POST http://localhost:3000/ufs
+Content-Type: application/json
+
+{
+  "sigla": "SP",
+  "nome_do_estado": "São Paulo"
+}
+
+### Atualizar uma UF
+PATCH http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+Content-Type: application/json
+
+{
+  "sigla": "RJ",
+  "nome_do_estado": "Rio de Janeiro"
+}
+
+### Deletar uma UF
+DELETE http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+
+
+### Listar Cidades
+GET http://localhost:3000/cidades
+
+### Criar cidade
+POST http://localhost:3000/cidades
+Content-Type: application/json
+
+{
+  "nomeCidade": "Corinthians",
+  "ufSigla": "SP"
+}
+
+### Deletar cidade
+DELETE http://localhost:3000/cidades/cid_hgSUb49HxF479jseqF0w5
+
+### Listar endereços
+GET http://localhost:3000/endereco
+
+### Listar um endereco
+GET http://localhost:3000/endereco/1
+
+### Criar um endereco
+POST http://localhost:3000/endereco
+Content-Type: application/json
+
+{
+  "CEP": "71906-500",
+  "numero": 3740,
+  "id_Cidade":"cid_fgqSltYM5XMcfwgyVnVhV"
+}
+
+### Atualizar um endereco
+PATCH http://localhost:3000/endereco/1
+Content-Type: application/json
+
+{
+  "sigla": "RJ",
+  "nome_do_estado": "Rio de Janeiro"
+}
+
+### Deletar um endereco
+DELETE http://localhost:3000/endereco/1
+
+### Criar Usuario
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "username": "Filipi",
+    "senha": "123",
+    "email":"filipi@gmail.com",
+    "tipoPerfil": "USER",
+    "id_Endereco":1
+}
+
+### Atualizar Usuario
+PATCH http://localhost:3000/usuario/1
+Content-Type: application/json
+
+{
+    "username": "Filipi Martins"
+}
+
+### Listar Usuarios
+GET http://localhost:3000/usuario/1
+
+### Deletar Usuario
+DELETE http://localhost:3000/usuario/1
