@@ -4,7 +4,7 @@ import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Produto } from './entities/produto.entity';
 import { Repository } from 'typeorm';
-import { Loja } from 'src/loja/entities/loja.entity';
+import { Loja } from '../loja/entities/loja.entity';
 
 @Injectable()
 export class ProdutoService {
@@ -19,16 +19,20 @@ export class ProdutoService {
 
 
   async create(dto: CreateProdutoDto) {
-    const Loja = await this.lojaRepository.findOneBy({ id_Loja: dto.id_loja });
+    const loja = await this.lojaRepository.findOneBy({ id_Loja: dto.id_loja });
 
-    if (!Loja) {
-      throw new NotFoundException(`UF com sigla '${dto.id_loja}' não encontrada`);
+    if (!loja) {
+      throw new NotFoundException(`Loja com ID '${dto.id_loja}' não encontrada`);
     }
 
+    const produto = this.produtoRepository.create({
+      ...dto,
+      loja: loja, // <- atribuindo o relacionamento corretamente
+    });
 
-    const Produto = this.produtoRepository.create(dto)
-    return this.produtoRepository.save(Produto);
+    return this.produtoRepository.save(produto);
   }
+
   async findAll(id_Loja: number) {
     return this.produtoRepository.find({
       where: { loja: { id_Loja: id_Loja } },
@@ -42,15 +46,18 @@ export class ProdutoService {
   }
 
   async update(id: number, dto: UpdateProdutoDto) {
-    const Produto = await this.produtoRepository.findOneBy({ id: id });
-    if (!Produto) return null;
-    this.repository.merge(Produto, dto);
-    return this.repository.save(Produto);
+    const produto = await this.produtoRepository.findOneBy({ id });
+    if (!produto) return null;
+  
+    const produtoAtualizado = this.produtoRepository.merge(produto, dto);
+    return this.produtoRepository.save(produtoAtualizado);
   }
-
+  
   async remove(id: number) {
-    const Produto = await this.produtoRepository.findOneBy({ id: id });
-    if (!Produto) return null;
-    return this.repository.remove(Produto);
+    const produto = await this.produtoRepository.findOneBy({ id });
+    if (!produto) return null;
+  
+    return this.produtoRepository.remove(produto);
   }
+  
 }

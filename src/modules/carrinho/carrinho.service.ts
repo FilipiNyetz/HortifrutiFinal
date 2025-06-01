@@ -10,30 +10,30 @@ export class CarrinhoService {
   constructor(
     @InjectRepository(Carrinho)
     private readonly repository: Repository<Carrinho>
-  ) {}
+  ) { }
 
   create(dto: CreateCarrinhoDto) {
-      const Carrinho = this.repository.create(dto);
-      return this.repository.save(Carrinho);
+    const Carrinho = this.repository.create(dto);
+    return this.repository.save(Carrinho);
   }
 
   findAll() {
     return this.repository.find();
   }
 
-  findOne(id: string) {
-    return this.repository.findOneBy({idCarrinho : id});
+  findOne(id: number) {
+    return this.repository.findOneBy({ id_Carrinho: id });
   }
 
-  async update(id: string, dto: UpdateCarrinhoDto) {
-    const Carrinho = await this.repository.findOneBy({idCarrinho : id});
+  async update(id: number, dto: UpdateCarrinhoDto) {
+    const Carrinho = await this.repository.findOneBy({ id_Carrinho: id });
     if (!Carrinho) return null;
     this.repository.merge(Carrinho, dto);
     return this.repository.save(Carrinho);
   }
 
-  async remove(id: string) {
-    const Carrinho = await this.repository.findOneBy({idCarrinho : id});
+  async remove(id: number) {
+    const Carrinho = await this.repository.findOneBy({ id_Carrinho: id });
     if (!Carrinho) return null;
     return this.repository.remove(Carrinho);
   }
