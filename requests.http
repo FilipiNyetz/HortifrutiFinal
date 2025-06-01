@@ -1,0 +1,66 @@
+### Listar lojas
+GET http://localhost:3000/loja
+
+###Criar loja
+POST http://localhost:3000/loja
+Content-Type: application/json
+
+{
+  "nome": "Loja da ana julia",
+    "endereco": "endereco ficticio",
+  "email": "ana@gmail",
+  "telefone":"982643446",
+  "senha":"123",
+  "dados_bancarios":"02954349107"
+}
+
+### Atualizar loja
+PATCH http://localhost:3000/loja/1
+Content-Type: application/json
+
+{
+  "nome": "Loja do Filipi",
+  "endereco":"Qs7 areal",
+  "email": "filipi@gmail",
+  "telefone":"982643446",
+  "senha":"123",
+  "dados_bancarios":"02954349107"
+}
+
+### Deletar loja
+DELETE http://localhost:3000/loja/1
+
+### Listar produto 
+GET http://localhost:3000/produto/1
+
+### Listar produtos por loja
+GET http://localhost:3000/produto/loja/1
+
+###Criar produto
+POST http://localhost:3000/produto
+Content-Type: application/json
+
+{
+  "nome": "Maca",
+  "descricao":"Al",    
+  "preco": 999,
+  "quantidade": 1,
+  "categoria":"Alfaces incriveis",
+  "loja":1
+}
+
+### Atualizar um produto
+PATCH http://localhost:3000/produto/1
+Content-Type: application/json
+
+{
+  "nome": "Banana",
+  "descricao":"Banana maravilha",    
+  "preco": 12,
+  "quantidade": 1,
+  "categoria":"Frutas incriveis",
+  "loja":1
+}
+
+### Deletar um produto
+DELETE http://localhost:3000/produto/1
