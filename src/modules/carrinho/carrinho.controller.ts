@@ -19,16 +19,16 @@ export class CarrinhoController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.carrinhoService.findOne(+id);
+    return this.carrinhoService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCarrinhoDto: UpdateCarrinhoDto) {
-    return this.carrinhoService.update(+id, updateCarrinhoDto);
+    return this.carrinhoService.update(id, updateCarrinhoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.carrinhoService.remove(+id);
+    return this.carrinhoService.remove(id);
   }
 }
