@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from '../usuario/entities/usuario.entity';
 import { CreateUsuarioDto } from '../usuario/dto/create-usuario.dto';
-import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
+import { Endereco } from '../endereco/entities/endereco.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -28,7 +28,7 @@ export class UsuarioService {
       username,
       email,
       senha,
-      id_Endereco
+      endereco
   });
 
     return this.usuarioRepository.save(usuario);

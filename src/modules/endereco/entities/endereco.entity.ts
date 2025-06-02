@@ -1,6 +1,7 @@
 // endereco.entity.ts
 import { Cidade } from 'src/modules/cidades/entities/cidade.entity';
 import { Loja } from 'src/modules/loja/entities/loja.entity';
+import { Usuario } from 'src/modules/usuario/entities/usuario.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne } from 'typeorm';
 
 @Entity('endereco')
@@ -20,4 +21,10 @@ export class Endereco {
   
   @OneToOne(() => Loja, (loja) => loja.endereco)
   loja: Loja;
+
+  @OneToOne(() => Usuario, (usuario) => usuario.endereco)
+  usuario: Usuario;
+  
+  
+
 }

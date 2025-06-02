@@ -28,7 +28,11 @@ export class Usuario {
   })
   role: UserRole;
 
-  @OneToOne(() => Endereco, { cascade: true, eager: true })
-  @JoinColumn()  // IMPORTANTE: define que essa entidade terá a FK
-  id_Endereco: number;
+  @OneToOne(() => Endereco, (endereco) => endereco.loja, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinColumn()
+  endereco: Endereco;
+
 }
