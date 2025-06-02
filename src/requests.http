@@ -54,7 +54,7 @@ Content-Type: application/json
 {
   "CEP": "71906-500",
   "numero": 3740,
-  "id_cidade":2
+  "id_cidade":1
 }
 
 ### Atualizar um endereco
@@ -129,13 +129,12 @@ POST http://localhost:3000/loja
 Content-Type: application/json
 
 {
-  "nome": "Loja da ana julia",
-  "endereco": "endereco ficticio",
+  "nome": "Loja do Filipi",
   "email": "ana@gmail.com",
   "telefone":"61982643446",
   "senha":"123",
   "dados_bancarios":"02954349107",
-
+  "id_Endereco": 1
 }
 
 ### Atualizar loja
