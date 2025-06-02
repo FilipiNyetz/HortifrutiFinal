@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { IsString, IsNumber } from 'class-validator';
+import { Cidade } from 'src/modules/cidades/entities/cidade.entity';
+import { ManyToOne } from 'typeorm';
 
 export class CreateEnderecoDto {
   @IsString()
@@ -8,6 +10,6 @@ export class CreateEnderecoDto {
   @IsNumber()
   numero: number;
 
-  @IsString()
-  id_Cidade: string;
+  @IsNumber()
+  id_cidade: number
 }

@@ -17,9 +17,9 @@ export class EnderecoService {
   ) { }
 
   async create(createEnderecoDto: CreateEnderecoDto): Promise<Endereco> {
-    const { CEP, numero, id_Cidade } = createEnderecoDto;
+    const { CEP, numero, id_cidade } = createEnderecoDto;
 
-    const cidade = await this.cidadeRepository.findOneBy({ id_cidade: createEnderecoDto.id_Cidade });
+    const cidade = await this.cidadeRepository.findOneBy({ id_cidade: id_cidade });
 
     if (!cidade) {
       throw new NotFoundException('Cidade não encontrada');
@@ -34,44 +34,49 @@ export class EnderecoService {
     return await this.enderecoRepository.save(endereco);
   }
 
-
-  findAll() {
+  async findAll(): Promise<Endereco[]> {
     return this.enderecoRepository.find();
   }
 
-  async findOne(id: number) {
-    const enedereco = await this.enderecoRepository.findOneBy({ id_Endereco:id });
-
-    if (!enedereco) {
-      throw new NotFoundException(`Endereco com ID ${id} não encontrado`);
-    }
-
-    return enedereco;
-  }
-
-  async update(id: number, updatePagamentoDto: UpdateEnderecoDto): Promise<Endereco> {
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco:id });
+  async findOne(id: number): Promise<Endereco> {
+    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
 
     if (!endereco) {
-      throw new NotFoundException(`Endereco com ID ${id} não encontrado`);
+      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
     }
 
-  
-    this.enderecoRepository.merge(endereco, updatePagamentoDto);
+    return endereco;
+  }
 
+  async update(id: number, updateEnderecoDto: UpdateEnderecoDto): Promise<Endereco> {
+    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
+
+    if (!endereco) {
+      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
+    }
+
+    // Se enviou novo id_Cidade, atualiza o relacionamento
+    if (updateEnderecoDto.id_cidade) {
+      const cidade = await this.cidadeRepository.findOneBy({ id_cidade: updateEnderecoDto.id_cidade });
+      if (!cidade) {
+        throw new NotFoundException('Cidade não encontrada para atualizar');
+      }
+      endereco.cidade = cidade;
+    }
+
+    // Atualiza os demais campos
+    this.enderecoRepository.merge(endereco, updateEnderecoDto);
 
     return this.enderecoRepository.save(endereco);
   }
 
-  async remove(id: number) {
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco:id });
+  async remove(id: number): Promise<void> {
+    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
 
     if (!endereco) {
-      throw new NotFoundException(`Endereco com ID ${id} não encontrado`);
+      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
     }
-
 
     await this.enderecoRepository.delete(id);
   }
 }
-

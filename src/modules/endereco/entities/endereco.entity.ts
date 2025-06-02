@@ -1,3 +1,4 @@
+// endereco.entity.ts
 import { Cidade } from 'src/modules/cidades/entities/cidade.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
@@ -12,6 +13,6 @@ export class Endereco {
   @Column()
   numero: number;
 
-  @ManyToOne(() => Cidade, { eager: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Cidade, (cidade) => cidade.enderecos, { eager: true, onDelete: 'CASCADE', nullable: false })
   cidade: Cidade;
 }

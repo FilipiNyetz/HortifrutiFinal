@@ -2,11 +2,7 @@
 GET http://localhost:3000/ufs
 
 ### Listar uma UF
-<<<<<<< HEAD
-GET http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
-=======
 GET http://localhost:3000/ufs/uf_H_so6xpkWVZ8hQpeMpUyd
->>>>>>> 6ee6f2b95703bbe0d28394ce00d6a3153236db86
 
 ### Criar uma UF
 POST http://localhost:3000/ufs
@@ -27,11 +23,7 @@ Content-Type: application/json
 }
 
 ### Deletar uma UF
-<<<<<<< HEAD
-DELETE http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
-=======
 DELETE http://localhost:3000/ufs/uf_ix7hcSFgGYwWYIOLrGpIm
->>>>>>> 6ee6f2b95703bbe0d28394ce00d6a3153236db86
 
 
 ### Listar Cidades
@@ -42,7 +34,7 @@ POST http://localhost:3000/cidades
 Content-Type: application/json
 
 {
-  "nomeCidade": "Corinthians",
+  "nomeCidade": "Sao Paulo",
   "ufSigla": "SP"
 }
 
@@ -62,7 +54,7 @@ Content-Type: application/json
 {
   "CEP": "71906-500",
   "numero": 3740,
-  "id_Cidade":"cid_XhnpW76rPngtxYI7zgyP1"
+  "id_cidade":2
 }
 
 ### Atualizar um endereco
@@ -70,8 +62,9 @@ PATCH http://localhost:3000/endereco/1
 Content-Type: application/json
 
 {
-  "sigla": "RJ",
-  "nome_do_estado": "Rio de Janeiro"
+  "CEP": "71906-500",
+  "numero": 3750,
+  "id_cidade":1
 }
 
 ### Deletar um endereco

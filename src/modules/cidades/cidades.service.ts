@@ -38,18 +38,18 @@ export class CidadesService {
     return this.repository.find();
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.repository.findOneBy({id_cidade : id});
   }
 
-  async update(id: string, dto: UpdateCidadeDto) {
+  async update(id: number, dto: UpdateCidadeDto) {
     const Cidade = await this.repository.findOneBy({id_cidade : id});
     if (!Cidade) return null;
     this.repository.merge(Cidade, dto);
     return this.repository.save(Cidade);
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const Cidade = await this.repository.findOneBy({id_cidade : id});
     if (!Cidade) return null;
     return this.repository.remove(Cidade);

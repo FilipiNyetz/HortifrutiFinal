@@ -18,14 +18,14 @@ export class CidadesController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const Cidade = await this.cidadesService.findOne(id);
     if (!Cidade) throw new NotFoundException();
     return Cidade;
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCidadeDto: UpdateCidadeDto) {
+  async update(@Param('id') id: number, @Body() updateCidadeDto: UpdateCidadeDto) {
    const Cidade = await this.cidadesService.update(id, updateCidadeDto);
    if (!Cidade) throw new NotFoundException();
    return Cidade;
@@ -33,7 +33,7 @@ export class CidadesController {
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
   const Cidade = await this.cidadesService.remove(id);
     if (!Cidade) throw new NotFoundException();
   }

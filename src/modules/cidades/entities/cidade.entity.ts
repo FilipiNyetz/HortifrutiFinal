@@ -1,25 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { BeforeInsert, Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Uf } from '../../ufs/entities/uf.entity'
-
-const { nanoid } = require('nanoid');
+// cidade.entity.ts
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Uf } from '../../ufs/entities/uf.entity';
+import { Endereco } from "src/modules/endereco/entities/endereco.entity";
 
 @Entity('cidades')
 export class Cidade {
-    @PrimaryColumn()
-    id_cidade: string;
+    @PrimaryGeneratedColumn()
+    id_cidade: number;  
 
     @Column()
     nomeCidade: string;
 
-    @ManyToOne(() => Uf, (uf) => uf.cidades, {onDelete: 'CASCADE',
-    eager: true,
-    })
+    @ManyToOne(() => Uf, (uf) => uf.cidades, { onDelete: 'CASCADE', eager: true })
     uf: Uf;
 
-    @BeforeInsert()
-    generateId() {this.id_cidade = `cid_${nanoid()}`}
-
+    @OneToMany(() => Endereco, (endereco) => endereco.cidade)
+    enderecos: Endereco[];
 }
