@@ -1,15 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsString, IsNumber } from 'class-validator';
-import { Cidade } from 'src/modules/cidades/entities/cidade.entity';
-import { ManyToOne } from 'typeorm';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateEnderecoDto {
   @IsString()
-  CEP: string;
+  @IsNotEmpty()
+  rua: string;
 
-  @IsNumber()
-  numero: number;
+  @IsString()
+  @IsNotEmpty()
+  cep: string;
 
-  @IsNumber()
-  id_cidade: number
+  @IsString()
+  @IsNotEmpty()
+  complemento: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nomeCidade: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nomeUsuario: string;
 }
+

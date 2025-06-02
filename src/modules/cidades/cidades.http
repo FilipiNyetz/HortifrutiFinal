@@ -6,8 +6,8 @@ POST http://localhost:3000/cidades
 Content-Type: application/json
 
 {
-  "nomeCidade": "Niterói",
-  "ufSigla": "RJ"
+  "nomeCidade": "Brasília",
+  "ufSigla": "DF"
 }
 
 ### Deletar cidade

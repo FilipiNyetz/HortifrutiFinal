@@ -1,0 +1,27 @@
+### Listar usuarios
+GET http://localhost:3000/usuario
+
+### Criar Usuario
+POST http://localhost:3000/usuario
+Content-Type: application/json
+
+{
+    "username": "Gabriel",
+    "senha": "123"
+}
+
+### Listar enderecos
+GET http://localhost:3000/endereco
+
+### Criar Endereco
+POST http://localhost:3000/endereco
+Content-Type: application/json
+
+{
+    "cep": "12345678",
+    "rua": "Rua 3",
+    "complemento": "26",
+    "nomeCidade": "Brasília",
+    "nomeUsuario": "Gabriel"
+
+}

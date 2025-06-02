@@ -19,7 +19,7 @@ export class CidadesService {
   ) {}
 
 
-      async create(dto: CreateCidadeDto) {
+    async create(dto: CreateCidadeDto) {
     const uf = await this.ufRepository.findOneBy({ sigla: dto.ufSigla });
 
     if (!uf) {

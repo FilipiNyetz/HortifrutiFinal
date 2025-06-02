@@ -9,8 +9,8 @@ POST http://localhost:3000/ufs
 Content-Type: application/json
 
 {
-  "sigla": "SP",
-  "nome_do_estado": "São Paulo"
+  "sigla": "DF",
+  "nome_do_estado": "Distrito Federal"
 }
 
 ### Atualizar uma UF

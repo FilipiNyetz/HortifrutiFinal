@@ -1,82 +1,74 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+ 
+ 
+ 
+ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
-import { Cidade } from '../cidades/entities/cidade.entity';
 import { Endereco } from './entities/endereco.entity';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Usuario } from '../usuario/entities/usuario.entity';
+import { Cidade } from '../cidades/entities/cidade.entity';
 
 @Injectable()
 export class EnderecoService {
-
   constructor(
     @InjectRepository(Endereco)
-    private readonly enderecoRepository: Repository<Endereco>,
+    private readonly repository: Repository<Endereco>,
+
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
+
     @InjectRepository(Cidade)
     private readonly cidadeRepository: Repository<Cidade>,
-  ) { }
+  ) {}
 
-  async create(createEnderecoDto: CreateEnderecoDto): Promise<Endereco> {
-    const { CEP, numero, id_cidade } = createEnderecoDto;
+  async create(dto: CreateEnderecoDto) {
+  const cidade = await this.cidadeRepository.findOneBy({ nomeCidade: dto.nomeCidade });
+  if (!cidade) {
+    throw new NotFoundException(`Cidade '${dto.nomeCidade}' não encontrada`);
+  }
 
-    const cidade = await this.cidadeRepository.findOneBy({ id_cidade: id_cidade });
+  const usuario = await this.usuarioRepository.findOneBy({ username: dto.nomeUsuario });
+  if (!usuario) {
+    throw new NotFoundException(`Usuário '${dto.nomeUsuario}' não encontrado`);
+  }
 
-    if (!cidade) {
-      throw new NotFoundException('Cidade não encontrada');
-    }
+  const endereco = this.repository.create({
+    rua: dto.rua,
+    cep: dto.cep,
+    complemento: dto.complemento,
+    cidade,
+    usuario,
+  });
 
-    const endereco = this.enderecoRepository.create({
-      CEP,
-      numero,
-      cidade,
+  return this.repository.save(endereco);
+}
+
+  findAll() {
+    return this.repository.find({
+      relations: ['cidade', 'usuario'],
     });
-
-    return await this.enderecoRepository.save(endereco);
   }
 
-  async findAll(): Promise<Endereco[]> {
-    return this.enderecoRepository.find();
+  findOne(id: string) {
+    return this.repository.findOne({
+      where: { id_endereco: id },
+      relations: ['cidade', 'usuario'],
+    });
   }
 
-  async findOne(id: number): Promise<Endereco> {
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
+  async update(id: string, dto: UpdateEnderecoDto) {
+    const endereco = await this.repository.findOneBy({ id_endereco: id });
+    if (!endereco) return null;
 
-    if (!endereco) {
-      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
-    }
-
-    return endereco;
+    this.repository.merge(endereco, dto);
+    return this.repository.save(endereco);
   }
 
-  async update(id: number, updateEnderecoDto: UpdateEnderecoDto): Promise<Endereco> {
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
-
-    if (!endereco) {
-      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
-    }
-
-    // Se enviou novo id_Cidade, atualiza o relacionamento
-    if (updateEnderecoDto.id_cidade) {
-      const cidade = await this.cidadeRepository.findOneBy({ id_cidade: updateEnderecoDto.id_cidade });
-      if (!cidade) {
-        throw new NotFoundException('Cidade não encontrada para atualizar');
-      }
-      endereco.cidade = cidade;
-    }
-
-    // Atualiza os demais campos
-    this.enderecoRepository.merge(endereco, updateEnderecoDto);
-
-    return this.enderecoRepository.save(endereco);
-  }
-
-  async remove(id: number): Promise<void> {
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco: id });
-
-    if (!endereco) {
-      throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
-    }
-
-    await this.enderecoRepository.delete(id);
+  async remove(id: string) {
+    const endereco = await this.repository.findOneBy({ id_endereco: id });
+    if (!endereco) return null;
+    return this.repository.remove(endereco);
   }
 }

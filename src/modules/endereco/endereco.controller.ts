@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { EnderecoService } from './endereco.service';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
+import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
+import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
 
 @Controller('endereco')
 export class EnderecoController {
@@ -18,17 +20,23 @@ export class EnderecoController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.enderecoService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const Endereco = await this.enderecoService.findOne(id);
+    if (!Endereco) throw new NotFoundException();
+    return Endereco;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEnderecoDto: UpdateEnderecoDto) {
-    return this.enderecoService.update(+id, updateEnderecoDto);
+  async update(@Param('id') id: string, @Body() updateEnderecoDto: UpdateEnderecoDto) {
+    const Endereco = await this.enderecoService.update(id, updateEnderecoDto);
+    if (!Endereco) throw new NotFoundException();
+    return Endereco;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.enderecoService.remove(+id);
+  @HttpCode(204)
+  async remove(@Param('id') id: string) {
+    const Endereco = await this.enderecoService.remove(id);
+    if (!Endereco) throw new NotFoundException();
   }
 }

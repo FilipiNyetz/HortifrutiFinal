@@ -1,30 +1,38 @@
-// endereco.entity.ts
-import { Cidade } from 'src/modules/cidades/entities/cidade.entity';
-import { Loja } from 'src/modules/loja/entities/loja.entity';
-import { Usuario } from 'src/modules/usuario/entities/usuario.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne } from 'typeorm';
+ 
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { BeforeInsert, Column, PrimaryColumn, Entity, ManyToOne } from "typeorm";
+import { Usuario } from "src/modules/usuario/entities/usuario.entity";
+import { Cidade } from "src/modules/cidades/entities/cidade.entity";
+
+const { nanoid } = require("nanoid");
 
 @Entity('endereco')
 export class Endereco {
-  @PrimaryGeneratedColumn()
-  id_Endereco: number;
+
+  @PrimaryColumn()
+  id_endereco: string;
 
   @Column()
-  CEP: string;
+  rua: string;
 
   @Column()
-  numero: number;
+  cep: string;
 
-  @ManyToOne(() => Cidade, (cidade) => cidade.enderecos, { eager: true, onDelete: 'CASCADE', nullable: false })
-  cidade: Cidade;
+  @Column()
+  complemento: string;
 
-  
-  @OneToOne(() => Loja, (loja) => loja.endereco)
-  loja: Loja;
+  @BeforeInsert()
+  generateId() {
+    this.id_endereco = `end_${nanoid()}`;
+  }
 
-  @OneToOne(() => Usuario, (usuario) => usuario.endereco)
+  // Relacionamento com Usuario (muitos endereços para um usuário)
+  @ManyToOne(() => Usuario, (usuario) => usuario.endereco)
   usuario: Usuario;
-  
-  
 
+  // Relacionamento com Cidade (muitos endereços para uma cidade)
+  @ManyToOne(() => Cidade, (cidade) => cidade.enderecos)
+  cidade: Cidade;
 }
