@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
 import { Produto } from '../../produto/entities/produto.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';

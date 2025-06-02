@@ -19,6 +19,7 @@ import { AvaliacaoModule } from './modules/avaliacao/avaliacao.module';
 import { UnidadeMedidaModule } from './modules/unidade-medida/unidade-medida.module';
 import { CompraModule } from './modules/compra/compra.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from 'src/modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritosModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule],
+    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritosModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

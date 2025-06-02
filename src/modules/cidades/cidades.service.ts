@@ -18,8 +18,7 @@ export class CidadesService {
     private readonly ufRepository: Repository<Uf>,
   ) {}
 
-
-    async create(dto: CreateCidadeDto) {
+  async create(dto: CreateCidadeDto) {
     const uf = await this.ufRepository.findOneBy({ sigla: dto.ufSigla });
 
     if (!uf) {
@@ -38,20 +37,22 @@ export class CidadesService {
     return this.repository.find();
   }
 
-  findOne(id: number) {
-    return this.repository.findOneBy({id_cidade : id});
-  }
-
-  async update(id: number, dto: UpdateCidadeDto) {
-    const Cidade = await this.repository.findOneBy({id_cidade : id});
-    if (!Cidade) return null;
-    this.repository.merge(Cidade, dto);
-    return this.repository.save(Cidade);
-  }
-
-  async remove(id: number) {
-    const Cidade = await this.repository.findOneBy({id_cidade : id});
-    if (!Cidade) return null;
-    return this.repository.remove(Cidade);
-  }
+findOne(id: string) {
+  return this.repository.findOneBy({ id_cidade: id });
 }
+
+async update(id: string, dto: UpdateCidadeDto) {
+  const cidade = await this.repository.findOneBy({ id_cidade: id });
+  if (!cidade) return null;
+  this.repository.merge(cidade, dto);
+  return this.repository.save(cidade);
+}
+
+async remove(id: string) {
+  const cidade = await this.repository.findOneBy({ id_cidade: id });
+  if (!cidade) return null;
+  return this.repository.remove(cidade);
+}
+
+}
+

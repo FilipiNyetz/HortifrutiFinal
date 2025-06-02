@@ -1,14 +1,17 @@
-import { Module } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { UsuarioModule } from '../usuario/usuario.module';
+import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [
-    UsuarioModule,
+    forwardRef(() => UsuarioModule),
     PassportModule,
     JwtModule.register({
       secret: 'segredo123',
@@ -16,6 +19,13 @@ import { UsuarioModule } from '../usuario/usuario.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    AuthService, 
+    JwtStrategy,
+    {
+      provide: 'APP_GUARD',
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AuthModule {}

@@ -16,13 +16,21 @@ export class LojaService {
     private readonly enderecoRepository: Repository<Endereco>,
   ) {}
 
-  async create(createLojaDto: CreateLojaDto) {
+  async create(createLojaDto: CreateLojaDto): Promise<Loja> {
     const { id_Endereco, ...dadosLoja } = createLojaDto;
 
-    const endereco = await this.enderecoRepository.findOneBy({ id_Endereco });
+    // Converter para número e validar
+    const idEndereco = Number(id_Endereco);
+    if (isNaN(idEndereco)) {
+      throw new NotFoundException('ID do endereço deve ser um número válido');
+    }
+
+    const endereco = await this.enderecoRepository.findOneBy({ 
+      id_endereco: idEndereco 
+    });
 
     if (!endereco) {
-      throw new NotFoundException(`Endereço com ID ${id_Endereco} não encontrado`);
+      throw new NotFoundException(`Endereço com ID ${idEndereco} não encontrado`);
     }
 
     const loja = this.lojaRepository.create({
@@ -33,11 +41,14 @@ export class LojaService {
     return this.lojaRepository.save(loja);
   }
 
-  findAll() {
-    return this.lojaRepository.find({ relations: ['endereco'] });
+  async findAll(): Promise<Loja[]> {
+    return this.lojaRepository.find({ 
+      relations: ['endereco'],
+      order: { id_Loja: 'ASC' }
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Loja> {
     const loja = await this.lojaRepository.findOne({
       where: { id_Loja: id },
       relations: ['endereco'],
@@ -50,22 +61,29 @@ export class LojaService {
     return loja;
   }
 
-  async update(id: number, dto: UpdateLojaDto) {
-    const loja = await this.lojaRepository.findOneBy({ id_Loja: id });
-    if (!loja) {
-      throw new NotFoundException(`Loja com ID ${id} não encontrada`);
+  async update(id: number, dto: UpdateLojaDto): Promise<Loja> {
+    const loja = await this.findOne(id); // Reutiliza o findOne que já inclui validação
+    
+    if (dto.id_Endereco) {
+      const idEndereco = Number(dto.id_Endereco);
+      const endereco = await this.enderecoRepository.findOneBy({ 
+        id_endereco: idEndereco 
+      });
+
+      if (!endereco) {
+        throw new NotFoundException(`Endereço com ID ${idEndereco} não encontrado`);
+      }
+      loja.endereco = endereco;
     }
 
     this.lojaRepository.merge(loja, dto);
     return this.lojaRepository.save(loja);
   }
 
-  async remove(id: number) {
-    const loja = await this.lojaRepository.findOneBy({ id_Loja: id });
-    if (!loja) {
+  async remove(id: number): Promise<void> {
+    const result = await this.lojaRepository.delete(id);
+    if (result.affected === 0) {
       throw new NotFoundException(`Loja com ID ${id} não encontrada`);
     }
-
-    return this.lojaRepository.remove(loja);
   }
 }

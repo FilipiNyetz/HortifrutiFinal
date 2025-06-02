@@ -21,7 +21,8 @@ export class EnderecoController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const Endereco = await this.enderecoService.findOne(id);
+    const numericId = Number(id);
+    const Endereco = await this.enderecoService.findOne(numericId);
     if (!Endereco) throw new NotFoundException();
     return Endereco;
   }

@@ -20,5 +20,5 @@ export class CreateLojaDto {
     dados_bancarios: string;
 
     @IsNumber()
-    id_Endereco:number
+    id_Endereco: string
 }

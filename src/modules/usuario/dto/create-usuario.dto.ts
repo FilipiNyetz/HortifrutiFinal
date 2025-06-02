@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsEmail, IsEnum, IsOptional, IsNumber } from 'class-validator';
-import { UserRole } from '../entities/usuario.entity'; // ajuste o caminho conforme sua estrutura
+import { UserRole } from '../entities/usuario.entity';
 
 export class CreateUsuarioDto {
   @IsString()
@@ -14,10 +14,10 @@ export class CreateUsuarioDto {
   email: string;
 
   @IsEnum(UserRole)
-  @IsOptional()  // perfil opcional
-  tipoPerfil?: UserRole;
+  @IsOptional()
+  role?: UserRole;
 
   @IsNumber()
-  @IsOptional() // endereço agora é opcional
-  id_Endereco?: number;
+  @IsOptional()
+  id_Endereco?: number; // Alterado para number (consistente com a entidade)
 }

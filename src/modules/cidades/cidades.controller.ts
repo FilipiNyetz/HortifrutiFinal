@@ -17,24 +17,25 @@ export class CidadesController {
     return this.cidadesService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: number) {
-    const Cidade = await this.cidadesService.findOne(id);
-    if (!Cidade) throw new NotFoundException();
-    return Cidade;
-  }
+@Get(':id')
+async findOne(@Param('id') id: string) {
+  const cidade = await this.cidadesService.findOne(id);
+  if (!cidade) throw new NotFoundException();
+  return cidade;
+}
 
-  @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateCidadeDto: UpdateCidadeDto) {
-   const Cidade = await this.cidadesService.update(id, updateCidadeDto);
-   if (!Cidade) throw new NotFoundException();
-   return Cidade;
-  }
+@Patch(':id')
+async update(@Param('id') id: string, @Body() updateCidadeDto: UpdateCidadeDto) {
+  const cidade = await this.cidadesService.update(id, updateCidadeDto);
+  if (!cidade) throw new NotFoundException();
+  return cidade;
+}
 
-  @Delete(':id')
-  @HttpCode(204)
-  async remove(@Param('id') id: number) {
-  const Cidade = await this.cidadesService.remove(id);
-    if (!Cidade) throw new NotFoundException();
-  }
+@Delete(':id')
+@HttpCode(204)
+async remove(@Param('id') id: string) {
+  const cidade = await this.cidadesService.remove(id);
+  if (!cidade) throw new NotFoundException();
+}
+
 }

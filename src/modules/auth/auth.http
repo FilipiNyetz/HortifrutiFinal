@@ -6,3 +6,44 @@ Content-Type: application/json
     "username": "Teste",
     "senha": "123"
 }
+
+### Criar endereco
+POST http://localhost:3000/endereco
+
+
+
+### Obter registros
+GET http://localhost:3000/auth/register
+
+### Registrar um usuário comum
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "cliente1",
+  "senha": "123456",
+  "email": "cliente1@teste.com",
+  "role": "USER"
+}
+
+### Registrar um lojista
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "lojista1",
+  "senha": "123456",
+  "email": "lojista1@teste.com",
+  "role": "LOJISTA"
+}
+
+### Registrar um entregador
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "entregador1",
+  "senha": "123456",
+  "email": "entregador1@teste.com",
+  "role": "ENTREGADOR"
+}

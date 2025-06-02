@@ -28,7 +28,8 @@ export class Usuario {
   })
   role: UserRole;
 
-  @OneToOne(() => Endereco, { cascade: true, eager: true })
-  @JoinColumn({ name: 'id_Endereco' }) // opcional: força o nome da coluna no banco
-  endereco: Endereco;  
+// usuario.entity.ts
+@OneToOne(() => Endereco, { eager: true })
+@JoinColumn({ name: 'id_Endereco' })
+endereco: Endereco | null; // Permitindo explicitamente null
 }

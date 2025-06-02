@@ -51,15 +51,12 @@ export class EnderecoService {
     });
   }
 
-  findOne(id: string) {
-    return this.repository.findOne({
-      where: { id_endereco: id },
-      relations: ['cidade', 'usuario'],
-    });
+  async findOne(id: number): Promise<Endereco | null> { // Recebe number
+    return this.repository.findOneBy({ id_endereco: id });
   }
 
   async update(id: string, dto: UpdateEnderecoDto) {
-    const endereco = await this.repository.findOneBy({ id_endereco: id });
+    const endereco = await this.repository.findOneBy({ id_endereco: Number(id) });
     if (!endereco) return null;
 
     this.repository.merge(endereco, dto);
@@ -67,7 +64,7 @@ export class EnderecoService {
   }
 
   async remove(id: string) {
-    const endereco = await this.repository.findOneBy({ id_endereco: id });
+    const endereco = await this.repository.findOneBy({ id_endereco: Number(id) });
     if (!endereco) return null;
     return this.repository.remove(endereco);
   }
