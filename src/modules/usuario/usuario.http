@@ -3,8 +3,9 @@ POST http://localhost:3000/usuario
 Content-Type: application/json
 
 {
-    "username": "Gabriel",
-    "senha": "123"
+    "username": "Teste",
+    "senha": "123",
+    "email": "teste@mail.com"
 }
 
 ### Atualizar Usuario
@@ -16,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Listar Usuarios
-GET http://localhost:3000/usuario/userID_whlLXWfi7sTV7V2LSEepx
+GET http://localhost:3000/usuario/
 
 ### Deletar Usuario
-DELETE http://localhost:3000/usuario/userID_whlLXWfi7sTV7V2LSEepx
+DELETE http://localhost:3000/usuario/7

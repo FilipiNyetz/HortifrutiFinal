@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Usuario } from '../usuario/entities/usuario.entity';
+import { Usuario, UserRole } from '../usuario/entities/usuario.entity';
 import { CreateUsuarioDto } from '../usuario/dto/create-usuario.dto';
-import { Endereco } from '../endereco/entities/endereco.entity';
+import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
@@ -15,24 +16,30 @@ export class UsuarioService {
     private enderecoRepository: Repository<Endereco>,
   ) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-    const { username, senha, email, tipoPerfil, id_Endereco } = createUsuarioDto;
 
-    // Busca o endereco para relacionar
+  async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    const { username, email, senha, tipoPerfil, id_Endereco } = createUsuarioDto;
+  
     const endereco = await this.enderecoRepository.findOneBy({ id_Endereco });
     if (!endereco) {
       throw new NotFoundException(`Endereço com id ${id_Endereco} não encontrado`);
     }
-
+  
+    const senhaCriptografada = await bcrypt.hash(senha, 10);
+  
     const usuario = this.usuarioRepository.create({
       username,
       email,
-      senha,
-      endereco
-  });
-
+      senha: senhaCriptografada,
+      role: tipoPerfil ?? UserRole.USER,
+      endereco,
+    });
+  
     return this.usuarioRepository.save(usuario);
   }
+  
+  
+  
 
   async findAll(): Promise<Usuario[]> {
     return this.usuarioRepository.find();
@@ -67,4 +74,9 @@ export class UsuarioService {
 
     await this.usuarioRepository.delete(id);
   }
+
+  async findByUsername(username: string): Promise<Usuario | null> {
+    return this.usuarioRepository.findOneBy({ username });
+  }
+  
 }

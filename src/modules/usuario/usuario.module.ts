@@ -9,5 +9,6 @@ import { Endereco } from '../endereco/entities/endereco.entity';
   imports: [TypeOrmModule.forFeature([Usuario, Endereco])],
   controllers: [UsuarioController],
   providers: [UsuarioService],
+  exports: [UsuarioService],
 })
 export class UsuarioModule { }

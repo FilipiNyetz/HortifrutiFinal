@@ -28,11 +28,7 @@ export class Usuario {
   })
   role: UserRole;
 
-  @OneToOne(() => Endereco, (endereco) => endereco.loja, {
-    cascade: true,
-    eager: true,
-  })
-  @JoinColumn()
-  endereco: Endereco;
-
+  @OneToOne(() => Endereco, { cascade: true, eager: true })
+  @JoinColumn({ name: 'id_Endereco' }) // opcional: força o nome da coluna no banco
+  endereco: Endereco;  
 }

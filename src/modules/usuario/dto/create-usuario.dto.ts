@@ -14,9 +14,10 @@ export class CreateUsuarioDto {
   email: string;
 
   @IsEnum(UserRole)
-  @IsOptional()  // Se o perfil for opcional na criação e defaultar para USER
+  @IsOptional()  // perfil opcional
   tipoPerfil?: UserRole;
 
   @IsNumber()
-  id_Endereco: number
+  @IsOptional() // endereço agora é opcional
+  id_Endereco?: number;
 }
