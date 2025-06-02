@@ -22,7 +22,7 @@ export class Usuario {
   email: string;
 
   @Column({
-    type: 'enum',
+    type: 'varchar',
     enum: UserRole,
     default: UserRole.USER,
   })

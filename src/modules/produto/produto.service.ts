@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Produto } from './entities/produto.entity';
+import { Repository } from 'typeorm';
+import { Loja } from '../loja/entities/loja.entity';
 
 @Injectable()
 export class ProdutoService {
-  create(createProdutoDto: CreateProdutoDto) {
-    return 'This action adds a new produto';
+  repository: any;
+  constructor(
+    @InjectRepository(Produto)
+    private readonly produtoRepository: Repository<Produto>,
+
+    @InjectRepository(Loja)
+    private readonly lojaRepository: Repository<Loja>,
+  ) { }
+
+
+  async create(dto: CreateProdutoDto) {
+    const loja = await this.lojaRepository.findOneBy({ id_Loja: dto.id_loja });
+
+    if (!loja) {
+      throw new NotFoundException(`Loja com ID '${dto.id_loja}' não encontrada`);
+    }
+
+    const produto = this.produtoRepository.create({
+      ...dto,
+      loja: loja, // <- atribuindo o relacionamento corretamente
+    });
+
+    return this.produtoRepository.save(produto);
   }
 
-  findAll() {
-    return `This action returns all produto`;
+  async findAll(id_Loja: number) {
+    return this.produtoRepository.find({
+      where: { loja: { id_Loja: id_Loja } },
+      relations: ['loja'],
+    });
   }
+
 
   findOne(id: number) {
-    return `This action returns a #${id} produto`;
+    return this.produtoRepository.findOneBy({ id: id });
   }
 
-  update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    return `This action updates a #${id} produto`;
+  async update(id: number, dto: UpdateProdutoDto) {
+    const produto = await this.produtoRepository.findOneBy({ id });
+    if (!produto) return null;
+  
+    const produtoAtualizado = this.produtoRepository.merge(produto, dto);
+    return this.produtoRepository.save(produtoAtualizado);
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} produto`;
+  
+  async remove(id: number) {
+    const produto = await this.produtoRepository.findOneBy({ id });
+    if (!produto) return null;
+  
+    return this.produtoRepository.remove(produto);
   }
+  
 }

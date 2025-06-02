@@ -2,7 +2,11 @@
 GET http://localhost:3000/ufs
 
 ### Listar uma UF
+<<<<<<< HEAD
 GET http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+=======
+GET http://localhost:3000/ufs/uf_H_so6xpkWVZ8hQpeMpUyd
+>>>>>>> 6ee6f2b95703bbe0d28394ce00d6a3153236db86
 
 ### Criar uma UF
 POST http://localhost:3000/ufs
@@ -23,7 +27,11 @@ Content-Type: application/json
 }
 
 ### Deletar uma UF
+<<<<<<< HEAD
 DELETE http://localhost:3000/ufs/uf_d5KM3e857_MQdSd2z71yT
+=======
+DELETE http://localhost:3000/ufs/uf_ix7hcSFgGYwWYIOLrGpIm
+>>>>>>> 6ee6f2b95703bbe0d28394ce00d6a3153236db86
 
 
 ### Listar Cidades
@@ -54,7 +62,7 @@ Content-Type: application/json
 {
   "CEP": "71906-500",
   "numero": 3740,
-  "id_Cidade":"cid_fgqSltYM5XMcfwgyVnVhV"
+  "id_Cidade":"cid_XhnpW76rPngtxYI7zgyP1"
 }
 
 ### Atualizar um endereco
@@ -94,3 +102,71 @@ GET http://localhost:3000/usuario/1
 
 ### Deletar Usuario
 DELETE http://localhost:3000/usuario/1
+
+### Listar lojas
+GET http://localhost:3000/loja
+
+###Criar loja
+POST http://localhost:3000/loja
+Content-Type: application/json
+
+{
+  "nome": "Loja da ana julia",
+  "endereco": "endereco ficticio",
+  "email": "ana@gmail.com",
+  "telefone":"61982643446",
+  "senha":"123",
+  "dados_bancarios":"02954349107",
+
+}
+
+### Atualizar loja
+PATCH http://localhost:3000/loja/1
+Content-Type: application/json
+
+{
+  "nome": "Loja do Filipi",
+  "endereco":"Qs7 areal",
+  "email": "filipi@gmail",
+  "telefone":"982643446",
+  "senha":"123",
+  "dados_bancarios":"02954349107"
+}
+
+### Deletar loja
+DELETE http://localhost:3000/loja/1
+
+### Listar produto 
+GET http://localhost:3000/produto/2
+
+### Listar produtos por loja
+GET http://localhost:3000/produto/loja/1
+
+###Criar produto
+POST http://localhost:3000/produto
+Content-Type: application/json
+
+{
+  "nome": "Teste",
+  "descricao":"dhr",    
+  "valor": 999,
+  "quantidade": 1,
+  "categoria":"Testes incriveis",
+  "id_loja":1
+}
+
+### Atualizar um produto
+PATCH http://localhost:3000/produto/2
+Content-Type: application/json
+
+{
+  "nome": "Banana",
+  "descricao":"Banana maravilha",    
+  "valor": 12,
+  "quantidade": 1,
+  "categoria":"Frutas incriveis",
+  "id_loja":1
+}
+
+### Deletar um produto
+DELETE http://localhost:3000/produto/1
