@@ -6,18 +6,18 @@ POST http://localhost:3000/categoria
 Content-Type: application/json
 
 {
-  "nome_categoria": "Categoria Exemplo",
+  "nome_categoria": "Categoria Com id numerico",
   "descricao": "Teste"
 }
 
 ### Atualizar categoria
-PATCH http://localhost:3000/categoria/cat_qbDj3PRRcMNxjTJo3BqVx
+PATCH http://localhost:3000/categoria/1
 Content-Type: application/json
 
 {
-  "nome_categoria": "Categoria Atualizada",
-  "descricao": "Teste 2"
+  "nome_categoria": "Categoria numerico Atualizada",
+  "descricao": "Teste "
 }
 
 ### Deletar categoria
-DELETE http://localhost:3000/categoria/cat_qbDj3PRRcMNxjTJo3BqVx
+DELETE http://localhost:3000/categoria/1

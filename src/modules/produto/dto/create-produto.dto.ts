@@ -16,8 +16,8 @@ export class CreateProdutoDto {
     @IsPositive()
     quantidade: number;
 
-    @IsString()
-    categoria: string;
+    @IsNumber()
+    id_categoria: number;
 
     @IsNumber()
     id_loja: number

@@ -20,18 +20,18 @@ export class CategoriaService {
     return this.repository.find();
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     return this.repository.findOneBy({id_categoria : id});
   }
 
-  async update(id: string, dto: UpdateCategoriaDto) {
+  async update(id: number, dto: UpdateCategoriaDto) {
     const Categoria = await this.repository.findOneBy({id_categoria : id});
     if (!Categoria) return null;
     this.repository.merge(Categoria, dto);
     return this.repository.save(Categoria);
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const Categoria = await this.repository.findOneBy({id_categoria : id});
     if (!Categoria) return null;
     return this.repository.remove(Categoria);

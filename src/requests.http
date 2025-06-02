@@ -103,6 +103,31 @@ GET http://localhost:3000/usuario/1
 ### Deletar Usuario
 DELETE http://localhost:3000/usuario/1
 
+
+### Listar categorias
+GET http://localhost:3000/categoria
+
+### Criar categoria
+POST http://localhost:3000/categoria
+Content-Type: application/json
+
+{
+  "nome_categoria": "Hortaliças",
+  "descricao": "Nessa categoria so podem ser registradas hortaliças"
+}
+
+### Atualizar categoria
+PATCH http://localhost:3000/categoria/1
+Content-Type: application/json
+
+{
+  "nome_categoria": "Categoria numerico Atualizada",
+  "descricao": "Teste "
+}
+
+### Deletar categoria
+DELETE http://localhost:3000/categoria/1
+
 ### Listar lojas
 GET http://localhost:3000/loja
 
@@ -151,12 +176,12 @@ Content-Type: application/json
   "descricao":"dhr",    
   "valor": 999,
   "quantidade": 1,
-  "categoria":"Testes incriveis",
+  "id_categoria":2,
   "id_loja":1
 }
 
 ### Atualizar um produto
-PATCH http://localhost:3000/produto/2
+PATCH http://localhost:3000/produto/3
 Content-Type: application/json
 
 {
@@ -164,7 +189,7 @@ Content-Type: application/json
   "descricao":"Banana maravilha",    
   "valor": 12,
   "quantidade": 1,
-  "categoria":"Frutas incriveis",
+  "id_categoria":2,
   "id_loja":1
 }
 

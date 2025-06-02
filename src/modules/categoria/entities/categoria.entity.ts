@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
+import { Produto } from "src/modules/produto/entities/produto.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-const { nanoid } = require('nanoid');
+
 
 @Entity('categoria')
 export class Categoria {
-
-    @PrimaryColumn()
-    id_categoria: string;
+    @PrimaryGeneratedColumn()
+    id_categoria: number;
 
     @Column()
     nome_categoria: string;
@@ -17,9 +17,6 @@ export class Categoria {
     @Column()
     descricao: string;
 
-    @BeforeInsert()
-    generateId() {
-        this.id_categoria = `cat_${nanoid()}`
-    }
-
+    @OneToMany(() => Produto, produto => produto.categoria)
+    produtos: Produto[];
 }

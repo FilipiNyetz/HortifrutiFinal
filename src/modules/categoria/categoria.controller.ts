@@ -18,14 +18,14 @@ export class CategoriaController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     const Categoria = await this.categoriaService.findOne(id);
     if (!Categoria) throw new NotFoundException();
     return Categoria;
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCategoriaDto: UpdateCategoriaDto) {
+  async update(@Param('id') id: number, @Body() updateCategoriaDto: UpdateCategoriaDto) {
     const Categoria = await this.categoriaService.update(id, updateCategoriaDto);
     if (!Categoria) throw new NotFoundException();
     return Categoria;
@@ -33,7 +33,7 @@ export class CategoriaController {
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: number) {
     const Categoria = await this.categoriaService.remove(id);
     if (!Categoria) throw new NotFoundException();
   }

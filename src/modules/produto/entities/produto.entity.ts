@@ -1,5 +1,6 @@
-import { BeforeInsert, PrimaryGeneratedColumn, Column, PrimaryColumn, Entity, ManyToOne } from "typeorm";
+import { BeforeInsert, PrimaryGeneratedColumn, Column, PrimaryColumn, Entity, ManyToOne, JoinColumn } from "typeorm";
 import { Loja } from '../../loja/entities/loja.entity';
+import { Categoria } from "src/modules/categoria/entities/categoria.entity";
 
 @Entity('produto')
 export class Produto {
@@ -15,8 +16,8 @@ export class Produto {
     // @Column()
     // id_Categoria: string; Vai ser util quando tiver o relacionamento com categoria
 
-    @Column()
-    categoria:string
+    // @Column()
+    // categoria:string
 
     @Column()
     valor: number;
@@ -27,4 +28,7 @@ export class Produto {
     })
     loja: Loja;
     static loja: any;
+
+    @ManyToOne(() => Categoria, categoria => categoria.produtos) // cria a FK explicitamente
+    categoria: Categoria;
 }
