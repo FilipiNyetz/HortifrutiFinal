@@ -1,6 +1,8 @@
-import { BeforeInsert, PrimaryGeneratedColumn, Column, PrimaryColumn, Entity, ManyToOne, JoinColumn } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn } from "typeorm";
 import { Loja } from '../../loja/entities/loja.entity';
 import { Categoria } from "src/modules/categoria/entities/categoria.entity";
+import { Carrinho } from '../../carrinho/entities/carrinho.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('produto')
 export class Produto {
@@ -11,24 +13,32 @@ export class Produto {
     nome: string;
 
     @Column()
-    quantidade: number;
+    descricao: string;
 
-    // @Column()
-    // id_Categoria: string; Vai ser util quando tiver o relacionamento com categoria
-
-    // @Column()
-    // categoria:string
+    @Column('decimal', { precision: 10, scale: 2 })
+    valor: number;
 
     @Column()
-    valor: number;
+    quantidade: number;
 
     @ManyToOne(() => Loja, (loja) => loja.produtos, {
         onDelete: 'CASCADE',
-        eager: true,
+        eager: true
     })
+    @JoinColumn({ name: 'loja_id' })
     loja: Loja;
-    static loja: any;
 
-    @ManyToOne(() => Categoria, categoria => categoria.produtos) // cria a FK explicitamente
+    @ManyToOne(() => Categoria, (categoria) => categoria.produtos, {
+        eager: true
+    })
+    @JoinColumn({ name: 'categoria_id' })
     categoria: Categoria;
+
+    @ManyToOne(() => Carrinho, (carrinho) => carrinho.produtos, {
+        onDelete: 'SET NULL',
+        nullable: true
+    })
+    @Exclude() // Evita a serialização circular
+    @JoinColumn({ name: 'carrinho_id' })
+    carrinho: Carrinho | null;
 }

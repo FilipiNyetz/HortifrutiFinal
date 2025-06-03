@@ -1,107 +1,133 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario, UserRole } from '../usuario/entities/usuario.entity';
 import { CreateUsuarioDto } from '../usuario/dto/create-usuario.dto';
+import { UpdateUsuarioDto } from '../usuario/dto/update-usuario.dto'; // Crie este DTO
 import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
 import * as bcrypt from 'bcrypt';
-
-type EnderecoOrNull = Endereco | null;
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
-
     @InjectRepository(Endereco)
     private enderecoRepository: Repository<Endereco>,
   ) {}
 
-async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
-  const { username, email, senha, role, id_Endereco } = createUsuarioDto;
+  async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
+    const { username, email, senha, role, id_Endereco } = createUsuarioDto;
 
-  const endereco: EnderecoOrNull = id_Endereco 
-    ? await this.enderecoRepository.findOneBy({ id_endereco: id_Endereco })
-    : null;
+    // Verifica se username ou email já existem
+    const existingUser = await this.usuarioRepository.findOne({
+      where: [{ username }, { email }],
+    });
+    
+    if (existingUser) {
+      throw new ConflictException('Username ou email já estão em uso');
+    }
 
-  if (id_Endereco && !endereco) {
-    throw new NotFoundException(`Endereço com ID ${id_Endereco} não encontrado`);
+    const endereco = id_Endereco 
+      ? await this.enderecoRepository.findOneBy({ id_endereco: id_Endereco })
+      : null;
+
+    if (id_Endereco && !endereco) {
+      throw new NotFoundException(`Endereço com ID ${id_Endereco} não encontrado`);
+    }
+
+    const usuario = this.usuarioRepository.create({
+      username,
+      email,
+      senha: await bcrypt.hash(senha, 10),
+      role: role || UserRole.USER, // Valor padrão
+      endereco
+    });
+
+    return this.usuarioRepository.save(usuario);
   }
-
-  const usuarioData = {
-    username,
-    email,
-    senha: await bcrypt.hash(senha, 10),
-    role,
-    endereco
-  };
-
-  return this.usuarioRepository.save(this.usuarioRepository.create(usuarioData));
-}
 
   async findAll(): Promise<Usuario[]> {
     return this.usuarioRepository.find({ relations: ['endereco'] });
   }
 
-  async findOne(id: number): Promise<Usuario | null> { // Alterado para number
-    return this.usuarioRepository.findOne({ 
+  async findOne(id: number): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ 
       where: { id_usuario: id },
       relations: ['endereco']
     });
+    
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
+    }
+    
+    return usuario;
   }
 
-   async update(id: number, updateDto: Partial<CreateUsuarioDto>): Promise<Usuario> {
-    const usuario = await this.findOne(id);
-    if (!usuario) {
-      throw new NotFoundException(`Usuário com id ${id} não encontrado`);
+  async update(id: number, updateDto: UpdateUsuarioDto): Promise<Usuario> {
+    const usuario = await this.findOne(id); // Já inclui a verificação de existência
+
+    // Atualização segura dos campos
+    if (updateDto.username !== undefined) {
+      const existingUser = await this.usuarioRepository.findOne({
+        where: { username: updateDto.username }
+      });
+      
+      if (existingUser && existingUser.id_usuario !== id) {
+        throw new ConflictException('Username já está em uso');
+      }
+      
+      usuario.username = updateDto.username;
     }
 
-    // Atualiza apenas os campos fornecidos
-    if (updateDto.username !== undefined) usuario.username = updateDto.username;
-    if (updateDto.email !== undefined) usuario.email = updateDto.email;
-    
+    if (updateDto.email !== undefined) {
+      const existingUser = await this.usuarioRepository.findOne({
+        where: { email: updateDto.email }
+      });
+      
+      if (existingUser && existingUser.id_usuario !== id) {
+        throw new ConflictException('Email já está em uso');
+      }
+      
+      usuario.email = updateDto.email;
+    }
+
     if (updateDto.senha !== undefined) {
       usuario.senha = await bcrypt.hash(updateDto.senha, 10);
     }
-    
-    if (updateDto.role !== undefined) usuario.role = updateDto.role;
-    
+
+    if (updateDto.role !== undefined) {
+      usuario.role = updateDto.role;
+    }
+
     if (updateDto.id_Endereco !== undefined) {
-      const endereco = await this.enderecoRepository.findOneBy({ 
-        id_endereco: updateDto.id_Endereco 
-      });
+      usuario.endereco = updateDto.id_Endereco
+        ? await this.enderecoRepository.findOneBy({ id_endereco: updateDto.id_Endereco })
+        : null;
       
-      if (!endereco) {
+      if (updateDto.id_Endereco && !usuario.endereco) {
         throw new NotFoundException(`Endereço com ID ${updateDto.id_Endereco} não encontrado`);
       }
-      
-      usuario.endereco = endereco;
     }
 
     return this.usuarioRepository.save(usuario);
   }
 
-  async remove(id: number): Promise<void> { // Alterado para number
-    const result = await this.usuarioRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
-    }
+  async remove(id: number): Promise<void> {
+    const usuario = await this.findOne(id); // Reutiliza a verificação de existência
+    await this.usuarioRepository.remove(usuario);
   }
 
-private async findEndereco(id: number): Promise<EnderecoOrNull> {
-  return this.enderecoRepository.findOneBy({ id_endereco: id });
-}
-
-
-  async findByUsername(username: string): Promise<Usuario | null> {
-    return this.usuarioRepository.findOne({ 
+  async findByUsername(username: string): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ 
       where: { username },
       relations: ['endereco']
     });
+    
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com username ${username} não encontrado`);
+    }
+    
+    return usuario;
   }
 }

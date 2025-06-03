@@ -1,15 +1,15 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateCarrinhoDto {
     @IsString()
-    @IsNotEmpty()
-    idProduto: string;
+    @IsOptional()
+    idProduto?: number | null; // Permite string, null ou undefined
 
     @IsNumber()
-    @IsNotEmpty()
-    valorTotal: number;
+    @IsOptional()
+    valorTotal?: number | null;
 
     @IsNumber()
-    @IsNotEmpty()
-    quantidade: number;
+    @IsOptional()
+    quantidade?: number | null;
 }

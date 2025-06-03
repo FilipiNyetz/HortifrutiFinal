@@ -1,0 +1,15 @@
+### Criar loja
+POST http://localhost:3000/loja
+Content-Type: application/json
+
+{
+  "nome": "Loja 1",
+  "email": "teste@acme.com",
+  "senha": "123",
+  "telefone": "11987654321",
+  "dados_bancarios": "XXXX",
+  "id_Endereco": 1
+}
+
+### Listar enderecos
+GET http://localhost:3000/endereco

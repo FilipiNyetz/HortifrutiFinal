@@ -1,0 +1,16 @@
+### Criar carrinho
+POST http://localhost:3000/carrinho
+Content-Type: application/json
+
+{
+}
+
+### Adicionar produto ao carrinho
+// o segundo numero é o ID do produto
+POST http://localhost:3000/carrinho/1/add-produto/3
+Content-Type: application/json
+
+{
+  "quantidade": 2
+}
+

@@ -6,8 +6,8 @@ POST http://localhost:3000/categoria
 Content-Type: application/json
 
 {
-  "nome_categoria": "Categoria Com id numerico",
-  "descricao": "Teste"
+  "nome_categoria": "Frutas",
+  "descricao": "Frutas"
 }
 
 ### Atualizar categoria

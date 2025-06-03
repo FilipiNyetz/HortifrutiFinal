@@ -12,6 +12,16 @@ export class CarrinhoController {
     return this.carrinhoService.create(createCarrinhoDto);
   }
 
+  // Nova rota para adicionar produto
+  @Post(':id/add-produto/:produtoId')
+  addProduto(
+    @Param('id') carrinhoId: number,
+    @Param('produtoId') produtoId: number,
+    @Body('quantidade') quantidade: number = 1
+  ) {
+    return this.carrinhoService.addProduto(carrinhoId, produtoId, quantidade);
+  }
+
   @Get()
   findAll() {
     return this.carrinhoService.findAll();

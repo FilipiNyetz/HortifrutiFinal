@@ -1,0 +1,32 @@
+### Criar produto
+POST http://localhost:3000/produto
+Content-Type: application/json
+
+{
+"nome": "Maçã",
+"descricao": "Vermelha",
+"valor": 5.99,
+"quantidade": 1,
+"id_categoria": 1,
+"id_loja": 1
+}
+
+### Criar produto
+POST http://localhost:3000/produto
+Content-Type: application/json
+
+{
+"nome": "Banana",
+"descricao": "Prata",
+"valor": 5.99,
+"quantidade": 10,
+"id_categoria": 1,
+"id_loja": 1
+}
+
+### Deletar
+DELETE http://localhost:3000/produto/1
+
+
+### Listar produtos
+GET http://localhost:3000/produto/3

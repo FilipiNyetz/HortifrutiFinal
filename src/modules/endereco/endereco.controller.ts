@@ -29,7 +29,8 @@ export class EnderecoController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateEnderecoDto: UpdateEnderecoDto) {
-    const Endereco = await this.enderecoService.update(id, updateEnderecoDto);
+    const numericId = Number(id);
+    const Endereco = await this.enderecoService.update(numericId, updateEnderecoDto);
     if (!Endereco) throw new NotFoundException();
     return Endereco;
   }
@@ -37,7 +38,7 @@ export class EnderecoController {
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id') id: string) {
-    const Endereco = await this.enderecoService.remove(id);
-    if (!Endereco) throw new NotFoundException();
+    const numericId = Number(id);
+    await this.enderecoService.remove(numericId);
   }
 }
