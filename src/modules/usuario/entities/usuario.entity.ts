@@ -1,5 +1,6 @@
 import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Compra } from 'src/modules/compra/entities/compra.entity';
 
 export enum UserRole {
   USER = 'USER',
@@ -28,8 +29,12 @@ export class Usuario {
   })
   role: UserRole;
 
-// usuario.entity.ts
-@OneToOne(() => Endereco, { eager: true })
-@JoinColumn({ name: 'id_Endereco' })
-endereco: Endereco | null; // Permitindo explicitamente null
+  // usuario.entity.ts
+  @OneToOne(() => Endereco, { eager: true })
+  @JoinColumn({ name: 'id_Endereco' })
+  endereco: Endereco | null; // Permitindo explicitamente null
+
+  @OneToMany(() => Compra, compra => compra.usuario)
+  compras: Compra[];
+
 }

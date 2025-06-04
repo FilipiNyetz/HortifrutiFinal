@@ -1,0 +1,12 @@
+### Listar usuarios
+GET http://localhost:3000/usuario/1
+
+
+
+### Criar compra
+POST http://localhost:3000/compra 
+Content-Type: application/json
+
+{
+"id_usuario": 1
+}
