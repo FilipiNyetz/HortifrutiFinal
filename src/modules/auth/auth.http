@@ -47,3 +47,12 @@ Content-Type: application/json
   "email": "entregador1@teste.com",
   "role": "ENTREGADOR"
 }
+
+### Login
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "Cézar",
+    "senha": "1234"
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
@@ -24,9 +25,10 @@ async function bootstrap() {
 
   // Configuração de CORS (opcional)
   app.enableCors({
-    origin: true,
+    origin: 'http://localhost:5173',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    exposedHeaders: ['Authorization'] // Adicione esta linha
   });
 
   const port = process.env.PORT || 3000;

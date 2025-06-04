@@ -118,16 +118,27 @@ export class UsuarioService {
     await this.usuarioRepository.remove(usuario);
   }
 
-  async findByUsername(username: string): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({ 
-      where: { username },
-      relations: ['endereco']
-    });
-    
-    if (!usuario) {
-      throw new NotFoundException(`Usuário com username ${username} não encontrado`);
-    }
-    
-    return usuario;
+async findByUsernameOrEmail(usernameOrEmail: string): Promise<Usuario> {
+  const usuario = await this.usuarioRepository.findOne({
+    where: [
+      { username: usernameOrEmail },  // Busca por username
+      { email: usernameOrEmail }     // Busca por email (alternativa)
+    ],
+    relations: ['endereco']          // Mantém a relação com endereco
+  });
+
+  if (!usuario) {
+    throw new NotFoundException(
+      `Usuário com username/email ${usernameOrEmail} não encontrado`
+    );
   }
+
+  console.log('Usuário encontrado:', { 
+    id: usuario.id_usuario,
+    username: usuario.username,
+    email: usuario.email 
+  });
+
+  return usuario;
+}
 }
