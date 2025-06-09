@@ -1,0 +1,27 @@
+### Listar métodos
+GET http://localhost:3000/metodo-pagamento
+
+
+### Criar método de pagamento
+POST http://localhost:3000/metodo-pagamento
+Content-Type: application/json
+
+{
+  "tipo": "pix",
+  "chave_pix": "chave-exemplo@provedor.com",
+  "id_usuario": 1
+}
+
+
+### Atualizar método de pagamento (ID = 1)
+PATCH http://localhost:3000/metodo-pagamento/1
+Content-Type: application/json
+
+{
+  "tipo": "cartao_de_credito",
+  "numero_cartao_credito": "5555444433332222"
+}
+
+
+### Deletar método de pagamento (ID = 1)
+DELETE http://localhost:3000/metodo-pagamento/1
