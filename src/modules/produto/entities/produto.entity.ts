@@ -1,8 +1,9 @@
-import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn } from "typeorm";
+import { PrimaryGeneratedColumn, Column, Entity, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { Loja } from '../../loja/entities/loja.entity';
 import { Categoria } from "src/modules/categoria/entities/categoria.entity";
 import { Carrinho } from '../../carrinho/entities/carrinho.entity';
 import { Exclude } from 'class-transformer';
+import { Favorito } from "src/modules/favoritos/entities/favorito.entity";
 
 @Entity('produto')
 export class Produto {
@@ -38,4 +39,7 @@ export class Produto {
     @Exclude() // Evita a serialização circular
     @JoinColumn({ name: 'carrinho_id' })
     carrinho: Carrinho | null;
+
+    @OneToMany(() => Favorito, (favorito) => favorito.produto)
+    favoritos: Favorito[];
 }

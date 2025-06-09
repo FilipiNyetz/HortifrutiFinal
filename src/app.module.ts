@@ -14,7 +14,7 @@ import { EnderecoModule } from './modules/endereco/endereco.module';
 import { EstoqueModule } from './modules/estoque/estoque.module';
 import { PerfilModule } from './modules/perfil/perfil.module';
 import { EntregaModule } from './modules/entrega/entrega.module';
-import { FavoritosModule } from './modules/favoritos/favoritos.module';
+import { FavoritoModule } from './modules/favoritos/favoritos.module';
 import { AvaliacaoModule } from './modules/avaliacao/avaliacao.module';
 import { UnidadeMedidaModule } from './modules/unidade-medida/unidade-medida.module';
 import { CompraModule } from './modules/compra/compra.module';
@@ -24,13 +24,13 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type:'sqlite',
+      type: 'sqlite',
       database: 'db.sqlite',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritosModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule, AuthModule],
+    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritoModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

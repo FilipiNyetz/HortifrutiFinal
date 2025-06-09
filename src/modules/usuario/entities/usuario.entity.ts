@@ -1,6 +1,7 @@
 import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Compra } from 'src/modules/compra/entities/compra.entity';
+import { Favorito } from 'src/modules/favoritos/entities/favorito.entity';
 
 export enum UserRole {
   USER = 'USER',
@@ -36,5 +37,8 @@ export class Usuario {
 
   @OneToMany(() => Compra, compra => compra.usuario)
   compras: Compra[];
+
+  @OneToMany(() => Favorito, (favorito) => favorito.usuario)
+  favoritos: Favorito[];
 
 }

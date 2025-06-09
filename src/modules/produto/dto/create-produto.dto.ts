@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsPositive } from 'class-validator';
-import { Loja } from '../../loja/entities/loja.entity';
+
 
 export class CreateProdutoDto {
     @IsString()

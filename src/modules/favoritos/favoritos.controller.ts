@@ -1,34 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { FavoritosService } from './favoritos.service';
+import {
+  Controller,
+  Post,
+  Get,
+  Delete,
+  Param,
+  Body,
+  NotFoundException,
+  ParseIntPipe
+} from '@nestjs/common';
+import { FavoritoService } from './favoritos.service';
 import { CreateFavoritoDto } from './dto/create-favorito.dto';
-import { UpdateFavoritoDto } from './dto/update-favorito.dto';
 
 @Controller('favoritos')
-export class FavoritosController {
-  constructor(private readonly favoritosService: FavoritosService) {}
+export class FavoritoController {
+  constructor(private readonly favoritoService: FavoritoService) { }
 
   @Post()
-  create(@Body() createFavoritoDto: CreateFavoritoDto) {
-    return this.favoritosService.create(createFavoritoDto);
+  async create(@Body() createFavoritoDto: CreateFavoritoDto) {
+    return await this.favoritoService.create(createFavoritoDto);
   }
 
   @Get()
-  findAll() {
-    return this.favoritosService.findAll();
+  async findAll() {
+    return await this.favoritoService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favoritosService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFavoritoDto: UpdateFavoritoDto) {
-    return this.favoritosService.update(+id, updateFavoritoDto);
+  @Get('usuario/:id')
+  async findByUsuario(@Param('id', ParseIntPipe) id: number) {
+    const favoritos = await this.favoritoService.findByUsuario(id);
+    if (!favoritos.length) {
+      throw new NotFoundException('Nenhum favorito encontrado para este usuário');
+    }
+    return favoritos;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favoritosService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.favoritoService.remove(id);
   }
 }
