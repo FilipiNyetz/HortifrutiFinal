@@ -14,7 +14,7 @@ export class UsuarioService {
     private usuarioRepository: Repository<Usuario>,
     @InjectRepository(Endereco)
     private enderecoRepository: Repository<Endereco>,
-  ) {}
+  ) { }
 
   async create(createUsuarioDto: CreateUsuarioDto): Promise<Usuario> {
     const { username, email, senha, role, id_Endereco } = createUsuarioDto;
@@ -23,12 +23,12 @@ export class UsuarioService {
     const existingUser = await this.usuarioRepository.findOne({
       where: [{ username }, { email }],
     });
-    
+
     if (existingUser) {
       throw new ConflictException('Username ou email já estão em uso');
     }
 
-    const endereco = id_Endereco 
+    const endereco = id_Endereco
       ? await this.enderecoRepository.findOneBy({ id_endereco: id_Endereco })
       : null;
 
@@ -39,7 +39,7 @@ export class UsuarioService {
     const usuario = this.usuarioRepository.create({
       username,
       email,
-      senha: await bcrypt.hash(senha, 10),
+      senha,
       role: role || UserRole.USER, // Valor padrão
       endereco
     });
@@ -52,15 +52,15 @@ export class UsuarioService {
   }
 
   async findOne(id: number): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({ 
+    const usuario = await this.usuarioRepository.findOne({
       where: { id_usuario: id },
       relations: ['endereco']
     });
-    
+
     if (!usuario) {
       throw new NotFoundException(`Usuário com ID ${id} não encontrado`);
     }
-    
+
     return usuario;
   }
 
@@ -72,11 +72,11 @@ export class UsuarioService {
       const existingUser = await this.usuarioRepository.findOne({
         where: { username: updateDto.username }
       });
-      
+
       if (existingUser && existingUser.id_usuario !== id) {
         throw new ConflictException('Username já está em uso');
       }
-      
+
       usuario.username = updateDto.username;
     }
 
@@ -84,11 +84,11 @@ export class UsuarioService {
       const existingUser = await this.usuarioRepository.findOne({
         where: { email: updateDto.email }
       });
-      
+
       if (existingUser && existingUser.id_usuario !== id) {
         throw new ConflictException('Email já está em uso');
       }
-      
+
       usuario.email = updateDto.email;
     }
 
@@ -104,7 +104,7 @@ export class UsuarioService {
       usuario.endereco = updateDto.id_Endereco
         ? await this.enderecoRepository.findOneBy({ id_endereco: updateDto.id_Endereco })
         : null;
-      
+
       if (updateDto.id_Endereco && !usuario.endereco) {
         throw new NotFoundException(`Endereço com ID ${updateDto.id_Endereco} não encontrado`);
       }
@@ -118,27 +118,28 @@ export class UsuarioService {
     await this.usuarioRepository.remove(usuario);
   }
 
-async findByUsernameOrEmail(usernameOrEmail: string): Promise<Usuario> {
-  const usuario = await this.usuarioRepository.findOne({
-    where: [
-      { username: usernameOrEmail },  // Busca por username
-      { email: usernameOrEmail }     // Busca por email (alternativa)
-    ],
-    relations: ['endereco']          // Mantém a relação com endereco
-  });
+  async findByUsernameOrEmail(usernameOrEmail: string): Promise<Usuario> {
+    const usuario = await this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .addSelect('usuario.senha') // Força o select da senha
+      .leftJoinAndSelect('usuario.endereco', 'endereco') // Mantém a relação com endereco
+      .where('usuario.username = :usernameOrEmail', { usernameOrEmail })
+      .orWhere('usuario.email = :usernameOrEmail', { usernameOrEmail })
+      .getOne();
 
-  if (!usuario) {
-    throw new NotFoundException(
-      `Usuário com username/email ${usernameOrEmail} não encontrado`
-    );
+    if (!usuario) {
+      throw new NotFoundException(
+        `Usuário com username/email ${usernameOrEmail} não encontrado`
+      );
+    }
+
+    console.log('Usuário encontrado:', {
+      id: usuario.id_usuario,
+      username: usuario.username,
+      email: usuario.email
+    });
+
+    return usuario;
   }
 
-  console.log('Usuário encontrado:', { 
-    id: usuario.id_usuario,
-    username: usuario.username,
-    email: usuario.email 
-  });
-
-  return usuario;
-}
 }

@@ -4,11 +4,12 @@ import { RegisterDto, LoginDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  @Get('test')
-  test() {
-    return { message: 'Rota de teste funcionando' };
+
+  @Get('register')
+  async listarUsuarios() {
+    return this.authService.listarUsuarios();
   }
 
 

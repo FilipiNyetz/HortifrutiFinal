@@ -12,7 +12,12 @@ export class AuthService {
   constructor(
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
+
+  async listarUsuarios() {
+    console.log('[REGISTER] Listando usuários...');
+    return this.usuarioService.findAll(); // Supondo que já exista esse método
+  }
 
   async register(dto: RegisterDto) {
     console.log('[REGISTER] Dados recebidos:', dto);
@@ -24,7 +29,7 @@ export class AuthService {
       senha: senhaCriptografada,
       email: dto.email,
       role: dto.role,
-      ...(dto.id_Endereco && { 
+      ...(dto.id_Endereco && {
         id_Endereco: Number(dto.id_Endereco)
       })
     };
@@ -35,7 +40,8 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     console.log('[LOGIN] Tentativa de login com:', dto);
-    
+
+
     try {
       // Alteração principal: usa findByUsernameOrEmail em vez de findByUsername
       const user = await this.usuarioService.findByUsernameOrEmail(dto.username);
@@ -44,10 +50,14 @@ export class AuthService {
         username: user.username,
         email: user.email,
         role: user.role,
-        senhaHash: '***HASH***' // Não mostra o hash real por segurança
+        // senhaHash: '***HASH***' // Não mostra o hash real por segurança
+        senhaHash: user.senha
       });
 
       console.log('[LOGIN] Comparando senhas...');
+      console.log('[LOGIN] Senha recebida no DTO:', dto.senha);
+      console.log('[LOGIN] Hash no banco:', user.senha);
+
       const senhaValida = await bcrypt.compare(dto.senha, user.senha);
       console.log('[LOGIN] Resultado da comparação:', senhaValida);
 

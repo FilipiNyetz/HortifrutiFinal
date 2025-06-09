@@ -1,17 +1,3 @@
-### Fazer login
-POST http://localhost:3000/auth/login
-Content-Type: application/json
-
-{
-    "username": "Teste",
-    "senha": "123"
-}
-
-### Criar endereco
-POST http://localhost:3000/endereco
-
-
-
 ### Obter registros
 GET http://localhost:3000/auth/register
 
@@ -20,21 +6,19 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-  "username": "cliente2",
-  "senha": "123456",
-  "email": "cliente2@teste.com",
+  "username": "cliente1",
+  "senha":"123456",
+  "email": "cliente1@teste.com",
   "role": "USER"
 }
 
-### Registrar um lojista
-POST http://localhost:3000/auth/register
+### Fazer login usuario
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "username": "lojista1",
-  "senha": "123456",
-  "email": "lojista1@teste.com",
-  "role": "LOJISTA"
+  "username":"cliente2",
+  "senha":"123456"
 }
 
 ### Registrar um entregador
@@ -48,11 +32,11 @@ Content-Type: application/json
   "role": "ENTREGADOR"
 }
 
-### Login
+### Fazer login entregador
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "username": "Cézar",
-    "senha": "1234"
+    "username": "entregador1",
+    "senha": "123456"
 }

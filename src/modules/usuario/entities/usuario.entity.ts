@@ -20,8 +20,9 @@ export class Usuario {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   senha: string;
+
 
   @Column()
   email: string;
