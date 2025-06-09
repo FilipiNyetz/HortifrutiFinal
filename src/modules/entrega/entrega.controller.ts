@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/await-thenable */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+  HttpCode,
+} from '@nestjs/common';
 import { EntregaService } from './entrega.service';
 import { CreateEntregaDto } from './dto/create-entrega.dto';
 import { UpdateEntregaDto } from './dto/update-entrega.dto';
@@ -18,17 +29,26 @@ export class EntregaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.entregaService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const entrega = await this.entregaService.findOne(+id);
+    if (!entrega) throw new NotFoundException('Entrega não encontrada');
+    return entrega;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEntregaDto: UpdateEntregaDto) {
-    return this.entregaService.update(+id, updateEntregaDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateEntregaDto: UpdateEntregaDto,
+  ) {
+    const entrega = await this.entregaService.update(+id, updateEntregaDto);
+    if (!entrega) throw new NotFoundException('Entrega não encontrada');
+    return entrega;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.entregaService.remove(+id);
+  @HttpCode(204)
+  async remove(@Param('id') id: string) {
+    const entrega = await this.entregaService.remove(+id);
+    if (!entrega) throw new NotFoundException('Entrega não encontrada');
   }
 }

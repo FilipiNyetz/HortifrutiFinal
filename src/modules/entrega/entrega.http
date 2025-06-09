@@ -1,0 +1,15 @@
+### Listar entregas
+GET http://localhost:3000/entrega
+
+### Criar entrega
+POST http://localhost:3000/entrega
+Content-type: application/json
+
+{
+"dataPedido": "2025-10-01",
+"dataEntrega": "2025-10-01",
+"status": "Entregue",
+"id_carrinho": 1,
+"id_usuario": 1,
+"id_endereco": 1
+}
