@@ -14,7 +14,7 @@ Content-Type: application/json
 
 
 ### Atualizar método de pagamento (ID = 1)
-PATCH http://localhost:3000/metodo-pagamento/1
+POST http://localhost:3000/metodo-pagamento/1
 Content-Type: application/json
 
 {
