@@ -3,6 +3,7 @@ import { Endereco } from 'src/modules/endereco/entities/endereco.entity';
 import { Produto } from '../../produto/entities/produto.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Estoque } from 'src/modules/estoque/entities/estoque.entity';
+import { Avaliacao } from 'src/modules/avaliacao/entities/avaliacao.entity';
 
 @Entity()
 export class Loja {
@@ -36,4 +37,8 @@ export class Loja {
 
   @OneToMany(() => Estoque, (estoque) => estoque.loja)
   estoques: Estoque[];
+
+
+  @OneToMany(() => Avaliacao, avaliacao => avaliacao.loja)
+  avaliacoes: Avaliacao[];
 }
