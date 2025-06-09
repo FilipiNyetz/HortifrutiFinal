@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm'; // ✅ necessário
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntregaService } from './entrega.service';
 import { EntregaController } from './entrega.controller';
 import { Usuario } from '../usuario/entities/usuario.entity';
@@ -9,7 +9,7 @@ import { Entrega } from './entities/entrega.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Usuario, Endereco, Carrinho, Entrega]) // ✅ CORRETO
+    TypeOrmModule.forFeature([Usuario, Endereco, Carrinho, Entrega])
   ],
   controllers: [EntregaController],
   providers: [EntregaService],

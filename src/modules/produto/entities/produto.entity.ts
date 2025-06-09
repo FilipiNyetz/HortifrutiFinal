@@ -18,9 +18,6 @@ export class Produto {
     @Column('decimal', { precision: 10, scale: 2 })
     valor: number;
 
-    @Column()
-    quantidade: number;
-
     @ManyToOne(() => Loja, (loja) => loja.produtos, {
         onDelete: 'CASCADE',
         eager: true

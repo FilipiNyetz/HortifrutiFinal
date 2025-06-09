@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsPositive, IsInt } from 'class-validator';
+import { IsString, IsNumber, IsPositive } from 'class-validator';
 import { Loja } from '../../loja/entities/loja.entity';
 
 export class CreateProdutoDto {
@@ -11,10 +11,6 @@ export class CreateProdutoDto {
     @IsNumber()
     @IsPositive()
     valor: number;
-
-    @IsInt()
-    @IsPositive()
-    quantidade: number;
 
     @IsNumber()
     id_categoria: number;

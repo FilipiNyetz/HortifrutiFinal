@@ -6,7 +6,6 @@ Content-Type: application/json
 "nome": "Maçã",
 "descricao": "Vermelha",
 "valor": 5.99,
-"quantidade": 1,
 "id_categoria": 1,
 "id_loja": 1
 }

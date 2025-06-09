@@ -1,0 +1,15 @@
+### Listar estoque
+GET http://localhost:3000/estoque
+
+### Criar estoque
+POST http://localhost:3000/estoque
+Content-Type: application/json
+
+{
+  "quantidade": 5,
+  "produtoId": 1,
+  "lojaId": 1
+}
+
+### Listar produtos
+GET http://localhost:3000/produtos
