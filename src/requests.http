@@ -52,9 +52,10 @@ POST http://localhost:3000/endereco
 Content-Type: application/json
 
 {
-  "CEP": "71906-500",
-  "numero": 3740,
-  "id_cidade":1
+  "cep": "7150690",
+  "rua": "Rua 3",
+  "complemento": "26",
+  "id_Cidade":1
 }
 
 ### Atualizar um endereco
@@ -114,8 +115,8 @@ PATCH http://localhost:3000/categoria/1
 Content-Type: application/json
 
 {
-  "nome_categoria": "Categoria numerico Atualizada",
-  "descricao": "Teste "
+  "nome_categoria": "Categoria frutas",
+  "descricao": "So registra frutas "
 }
 
 ### Deletar categoria
@@ -172,18 +173,3 @@ Content-Type: application/json
   "id_loja":1
 }
 
-### Atualizar um produto
-PATCH http://localhost:3000/produto/3
-Content-Type: application/json
-
-{
-  "nome": "Banana",
-  "descricao":"Banana maravilha",    
-  "valor": 12,
-  "quantidade": 1,
-  "id_categoria":2,
-  "id_loja":1
-}
-
-### Deletar um produto
-DELETE http://localhost:3000/produto/1

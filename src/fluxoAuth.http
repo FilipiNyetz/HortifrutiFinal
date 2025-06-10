@@ -9,7 +9,8 @@ Content-Type: application/json
   "username": "cliente1",
   "senha":"123456",
   "email": "cliente1@teste.com",
-  "role": "USER"
+  "role": "USER",
+  "id_Endereco":1
 }
 
 ### Fazer login usuario
@@ -37,6 +38,27 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "username": "entregador1",
-    "senha": "123456"
+  "username": "entregador1",
+  "senha": "123456"
+}
+
+### Registrar um lojista
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+  "username": "lojista1",
+  "senha": "123456",
+  "email": "lojista1@teste.com",
+  "role": "LOJISTA",
+  "id_Endereco":2
+}
+
+### Fazer login lojista
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "username": "lojista1",
+  "senha": "123456"
 }

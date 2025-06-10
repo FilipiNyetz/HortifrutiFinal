@@ -1,6 +1,6 @@
- 
- 
- 
+
+
+
 import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Usuario } from "src/modules/usuario/entities/usuario.entity";
 import { Cidade } from "src/modules/cidades/entities/cidade.entity";
@@ -20,11 +20,8 @@ export class Endereco {
   @Column()
   complemento: string;
 
-  @OneToOne(() => Usuario, (usuario) => usuario.endereco)
+  @OneToOne(() => Usuario, usuario => usuario.endereco)
   usuario: Usuario;
-
-  @OneToOne(() => Loja, (loja) => loja.endereco)
-  loja: Loja;
 
   @ManyToOne(() => Cidade, (cidade) => cidade.enderecos)
   cidade: Cidade;

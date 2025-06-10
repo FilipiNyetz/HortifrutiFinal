@@ -6,10 +6,11 @@ import { Produto } from './entities/produto.entity';
 import { Loja } from '../loja/entities/loja.entity';
 import { Categoria } from '../categoria/entities/categoria.entity';
 import { Carrinho } from '../carrinho/entities/carrinho.entity';
+import { AuthModule } from '../auth/auth.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Produto, Loja, Categoria, Carrinho])],
+  imports: [TypeOrmModule.forFeature([Produto, Loja, Categoria, Carrinho]), AuthModule],
   controllers: [ProdutoController],
   providers: [ProdutoService], // adicione aqui
 })

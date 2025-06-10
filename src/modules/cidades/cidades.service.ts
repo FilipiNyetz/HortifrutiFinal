@@ -10,13 +10,13 @@ import { NotFoundException } from '@nestjs/common';
 @Injectable()
 export class CidadesService {
 
-  constructor( 
+  constructor(
     @InjectRepository(Cidade)
     private readonly repository: Repository<Cidade>,
-  
+
     @InjectRepository(Uf)
     private readonly ufRepository: Repository<Uf>,
-  ) {}
+  ) { }
 
   async create(dto: CreateCidadeDto) {
     const uf = await this.ufRepository.findOneBy({ sigla: dto.ufSigla });
@@ -37,22 +37,22 @@ export class CidadesService {
     return this.repository.find();
   }
 
-findOne(id: string) {
-  return this.repository.findOneBy({ id_cidade: id });
-}
+  findOne(id: number) {
+    return this.repository.findOneBy({ id_cidade: id });
+  }
 
-async update(id: string, dto: UpdateCidadeDto) {
-  const cidade = await this.repository.findOneBy({ id_cidade: id });
-  if (!cidade) return null;
-  this.repository.merge(cidade, dto);
-  return this.repository.save(cidade);
-}
+  async update(id: number, dto: UpdateCidadeDto) {
+    const cidade = await this.repository.findOneBy({ id_cidade: id });
+    if (!cidade) return null;
+    this.repository.merge(cidade, dto);
+    return this.repository.save(cidade);
+  }
 
-async remove(id: string) {
-  const cidade = await this.repository.findOneBy({ id_cidade: id });
-  if (!cidade) return null;
-  return this.repository.remove(cidade);
-}
+  async remove(id: number) {
+    const cidade = await this.repository.findOneBy({ id_cidade: id });
+    if (!cidade) return null;
+    return this.repository.remove(cidade);
+  }
 
 }
 

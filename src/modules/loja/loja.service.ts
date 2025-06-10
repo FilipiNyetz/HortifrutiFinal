@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Loja } from './entities/loja.entity';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Loja } from './entities/loja.entity';
-import { Endereco } from '../endereco/entities/endereco.entity';
-import { Repository } from 'typeorm';
+import { Usuario } from '../usuario/entities/usuario.entity';
 
 @Injectable()
 export class LojaService {
@@ -12,78 +12,78 @@ export class LojaService {
     @InjectRepository(Loja)
     private readonly lojaRepository: Repository<Loja>,
 
-    @InjectRepository(Endereco)
-    private readonly enderecoRepository: Repository<Endereco>,
-  ) {}
+    @InjectRepository(Usuario)
+    private readonly usuarioRepository: Repository<Usuario>,
+  ) { }
 
   async create(createLojaDto: CreateLojaDto): Promise<Loja> {
-    const { id_Endereco, ...dadosLoja } = createLojaDto;
-
-    // Converter para número e validar
-    const idEndereco = Number(id_Endereco);
-    if (isNaN(idEndereco)) {
-      throw new NotFoundException('ID do endereço deve ser um número válido');
-    }
-
-    const endereco = await this.enderecoRepository.findOneBy({ 
-      id_endereco: idEndereco 
+    const usuario = await this.usuarioRepository.findOne({
+      where: { id_usuario: createLojaDto.usuarioId },
     });
 
-    if (!endereco) {
-      throw new NotFoundException(`Endereço com ID ${idEndereco} não encontrado`);
+    if (!usuario) {
+      throw new NotFoundException('Usuário lojista não encontrado');
+    }
+
+    if (usuario.role !== 'LOJISTA') {
+      throw new BadRequestException('Usuário não possui permissão para criar loja');
     }
 
     const loja = this.lojaRepository.create({
-      ...dadosLoja,
-      endereco,
+      nome: createLojaDto.nome,
+      telefone: createLojaDto.telefone,
+      dados_bancarios: createLojaDto.dados_bancarios,
+      usuario, // relaciona o usuário lojista
     });
 
     return this.lojaRepository.save(loja);
   }
 
-  async findAll(): Promise<Loja[]> {
-    return this.lojaRepository.find({ 
-      relations: ['endereco'],
-      order: { id_Loja: 'ASC' }
-    });
+  findAll(): Promise<Loja[]> {
+    return this.lojaRepository.find({ relations: ['usuario'] });
   }
 
   async findOne(id: number): Promise<Loja> {
     const loja = await this.lojaRepository.findOne({
       where: { id_Loja: id },
-      relations: ['endereco'],
+      relations: ['usuario'],
     });
 
     if (!loja) {
-      throw new NotFoundException(`Loja com ID ${id} não encontrada`);
+      throw new NotFoundException(`Loja com id ${id} não encontrada`);
     }
 
     return loja;
   }
 
-  async update(id: number, dto: UpdateLojaDto): Promise<Loja> {
-    const loja = await this.findOne(id); // Reutiliza o findOne que já inclui validação
-    
-    if (dto.id_Endereco) {
-      const idEndereco = Number(dto.id_Endereco);
-      const endereco = await this.enderecoRepository.findOneBy({ 
-        id_endereco: idEndereco 
+  async update(id: number, updateLojaDto: UpdateLojaDto): Promise<Loja> {
+    const loja = await this.findOne(id);
+
+    if (updateLojaDto.nome !== undefined) loja.nome = updateLojaDto.nome;
+    if (updateLojaDto.telefone !== undefined) loja.telefone = updateLojaDto.telefone;
+    if (updateLojaDto.dados_bancarios !== undefined) loja.dados_bancarios = updateLojaDto.dados_bancarios;
+
+    if (updateLojaDto.usuarioId !== undefined) {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { id_usuario: updateLojaDto.usuarioId },
       });
 
-      if (!endereco) {
-        throw new NotFoundException(`Endereço com ID ${idEndereco} não encontrado`);
+      if (!usuario) {
+        throw new NotFoundException('Usuário lojista não encontrado');
       }
-      loja.endereco = endereco;
+
+      if (usuario.role !== 'LOJISTA') {
+        throw new BadRequestException('Usuário não possui permissão para ser lojista');
+      }
+
+      loja.usuario = usuario;
     }
 
-    this.lojaRepository.merge(loja, dto);
     return this.lojaRepository.save(loja);
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.lojaRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Loja com ID ${id} não encontrada`);
-    }
+    const loja = await this.findOne(id);
+    await this.lojaRepository.remove(loja);
   }
 }

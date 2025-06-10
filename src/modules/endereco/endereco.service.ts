@@ -1,13 +1,9 @@
- 
- 
- 
- import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEnderecoDto } from './dto/create-endereco.dto';
 import { UpdateEnderecoDto } from './dto/update-endereco.dto';
 import { Endereco } from './entities/endereco.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Usuario } from '../usuario/entities/usuario.entity';
 import { Cidade } from '../cidades/entities/cidade.entity';
 
 @Injectable()
@@ -15,21 +11,15 @@ export class EnderecoService {
   constructor(
     @InjectRepository(Endereco)
     private readonly repository: Repository<Endereco>,
-    @InjectRepository(Usuario)
-    private readonly usuarioRepository: Repository<Usuario>,
     @InjectRepository(Cidade)
     private readonly cidadeRepository: Repository<Cidade>,
-  ) {}
+  ) { }
 
   async create(dto: CreateEnderecoDto) {
-    const cidade = await this.cidadeRepository.findOneBy({ nomeCidade: dto.nomeCidade });
+    // Agora busca por id_Cidade, que é number
+    const cidade = await this.cidadeRepository.findOneBy({ id_cidade: dto.id_Cidade });
     if (!cidade) {
-      throw new NotFoundException(`Cidade '${dto.nomeCidade}' não encontrada`);
-    }
-
-    const usuario = await this.usuarioRepository.findOneBy({ username: dto.nomeUsuario });
-    if (!usuario) {
-      throw new NotFoundException(`Usuário '${dto.nomeUsuario}' não encontrado`);
+      throw new NotFoundException(`Cidade com ID '${dto.id_Cidade}' não encontrada`);
     }
 
     const endereco = this.repository.create({
@@ -37,7 +27,6 @@ export class EnderecoService {
       cep: dto.cep,
       complemento: dto.complemento,
       cidade,
-      usuario,
     });
 
     return this.repository.save(endereco);
@@ -45,14 +34,14 @@ export class EnderecoService {
 
   findAll() {
     return this.repository.find({
-      relations: ['cidade', 'usuario'],
+      relations: ['cidade'],
     });
   }
 
   async findOne(id: number): Promise<Endereco> {
-    const endereco = await this.repository.findOne({ 
+    const endereco = await this.repository.findOne({
       where: { id_endereco: id },
-      relations: ['cidade', 'usuario']
+      relations: ['cidade']
     });
     if (!endereco) {
       throw new NotFoundException(`Endereço com ID ${id} não encontrado`);
@@ -61,16 +50,15 @@ export class EnderecoService {
   }
 
   async update(id: number, dto: UpdateEnderecoDto) {
-    const endereco = await this.findOne(id); // Reutiliza a busca com tratamento de erro
+    const endereco = await this.findOne(id);
 
-    // Atualiza apenas os campos fornecidos
     if (dto.rua !== undefined) endereco.rua = dto.rua;
     if (dto.cep !== undefined) endereco.cep = dto.cep;
     if (dto.complemento !== undefined) endereco.complemento = dto.complemento;
-    
-    if (dto.nomeCidade !== undefined) {
-      const cidade = await this.cidadeRepository.findOneBy({ nomeCidade: dto.nomeCidade });
-      if (!cidade) throw new NotFoundException(`Cidade '${dto.nomeCidade}' não encontrada`);
+
+    if (dto.id_Cidade !== undefined) {
+      const cidade = await this.cidadeRepository.findOneBy({ id_cidade: dto.id_Cidade });
+      if (!cidade) throw new NotFoundException(`Cidade com ID '${dto.id_Cidade}' não encontrada`);
       endereco.cidade = cidade;
     }
 
@@ -82,4 +70,3 @@ export class EnderecoService {
     await this.repository.remove(endereco);
   }
 }
-

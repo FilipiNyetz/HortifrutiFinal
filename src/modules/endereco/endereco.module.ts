@@ -7,9 +7,9 @@ import { Cidade } from '../cidades/entities/cidade.entity';
 import { Usuario } from '../usuario/entities/usuario.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Endereco, Usuario, Cidade])],
+  imports: [TypeOrmModule.forFeature([Endereco, Cidade])],
   controllers: [EnderecoController],
   providers: [EnderecoService],
 })
 
-export class EnderecoModule {}
+export class EnderecoModule { }
