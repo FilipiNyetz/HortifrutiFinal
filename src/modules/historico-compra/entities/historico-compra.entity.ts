@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, OneToMany } from 'typeorm';
 import { Carrinho } from '../../carrinho/entities/carrinho.entity';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 import { MetodoPagamento } from 'src/modules/metodo-pagamento/entities/metodo-pagamento.entity';
+import { Avaliacao } from 'src/modules/avaliacao/entities/avaliacao.entity';
 
 export enum CompraStatus {
     PENDING = 'PENDING',
@@ -31,6 +32,9 @@ export class HistoricoCompra {
 
     @ManyToOne(() => MetodoPagamento, metodo => metodo.historicos, { eager: true })
     metodoPagamento: MetodoPagamento;
+
+    @OneToMany(() => Avaliacao, (avaliacao) => avaliacao.historicoCompra)
+    avaliacoes: Avaliacao[];
 
 }
 

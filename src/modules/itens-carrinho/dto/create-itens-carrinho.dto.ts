@@ -2,7 +2,7 @@ import { IsNumber } from "class-validator";
 
 export class CreateItensCarrinhoDto {
     @IsNumber()
-    carrinhoId: number;
+    id_Carrinho: number;
 
     @IsNumber()
     produtoId: number;

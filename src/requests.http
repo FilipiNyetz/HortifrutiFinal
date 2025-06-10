@@ -52,7 +52,7 @@ POST http://localhost:3000/endereco
 Content-Type: application/json
 
 {
-  "cep": "777777",
+  "cep": "71906-777",
   "rua": "Rua 3",
   "complemento": "26",
   "id_Cidade":1
@@ -63,7 +63,7 @@ PATCH http://localhost:3000/endereco/1
 Content-Type: application/json
 
 {
-  "CEP": "71906-500",
+  "CEP": "71906-777",
   "numero": 3750,
   "id_cidade":1
 }

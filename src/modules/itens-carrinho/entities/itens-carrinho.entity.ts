@@ -8,7 +8,7 @@ export class ItemCarrinho {
     id: number;
 
     @ManyToOne(() => Carrinho, carrinho => carrinho.itens, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'carrinhoId' })
+    @JoinColumn({ name: 'id_Carrinho' })
     carrinho: Carrinho;
 
     @ManyToOne(() => Produto, produto => produto.itensCarrinho, { eager: true })
@@ -20,5 +20,5 @@ export class ItemCarrinho {
 
     @Column()
     precoUnitario: number;
-
 }
+

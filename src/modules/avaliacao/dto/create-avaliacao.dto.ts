@@ -8,8 +8,12 @@ export class CreateAvaliacaoDto {
     nota: number;
 
     @IsNumber()
-    id_Loja: number;
+    id_HistoricoCompra: number;
 
     @IsNumber()
     id_Usuario: number;
+
+    @IsNumber()
+    id_Loja: number;
+
 }

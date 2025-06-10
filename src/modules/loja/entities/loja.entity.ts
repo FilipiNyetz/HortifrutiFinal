@@ -26,7 +26,6 @@ export class Loja {
   @OneToMany(() => Estoque, (estoque) => estoque.loja)
   estoques: Estoque[];
 
-
   @OneToMany(() => Avaliacao, avaliacao => avaliacao.loja)
   avaliacoes: Avaliacao[];
 

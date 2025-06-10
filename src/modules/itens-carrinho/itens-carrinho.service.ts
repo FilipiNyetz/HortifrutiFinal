@@ -19,33 +19,25 @@ export class ItensCarrinhoService {
     private readonly produtoRepository: Repository<Produto>,
   ) { }
 
-  async create(data: CreateItensCarrinhoDto): Promise<ItemCarrinho> {
-    const carrinho = await this.carrinhoRepository.findOne({
-      where: { id_Carrinho: data.carrinhoId },
-      relations: ['itens'],
-    });
-
+  async create(dto: CreateItensCarrinhoDto): Promise<ItemCarrinho> {
+    const carrinho = await this.carrinhoRepository.findOne({ where: { id_Carrinho: dto.id_Carrinho } });
     if (!carrinho) throw new NotFoundException('Carrinho não encontrado');
 
-    const produto = await this.produtoRepository.findOne({
-      where: { id: data.produtoId }
-    });
-
+    const produto = await this.produtoRepository.findOne({ where: { id: dto.produtoId } });
     if (!produto) throw new NotFoundException('Produto não encontrado');
 
     const item = this.itensCarrinhoRepository.create({
       carrinho,
       produto,
-      quantidade: data.quantidade,
-      precoUnitario: produto.valor
+      quantidade: dto.quantidade,
+      precoUnitario: produto.valor,
     });
 
     await this.itensCarrinhoRepository.save(item);
 
-    // Atualiza o carrinho
-    carrinho.valorTotal = (carrinho.valorTotal || 0) + produto.valor * data.quantidade;
-    carrinho.quantidade = (carrinho.quantidade || 0) + data.quantidade;
-
+    // Atualiza valor total e quantidade do carrinho
+    carrinho.valorTotal = (carrinho.valorTotal || 0) + produto.valor * dto.quantidade;
+    carrinho.quantidade = (carrinho.quantidade || 0) + dto.quantidade;
     await this.carrinhoRepository.save(carrinho);
 
     return item;
