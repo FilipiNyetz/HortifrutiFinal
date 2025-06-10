@@ -20,6 +20,7 @@ import { UnidadeMedidaModule } from './modules/unidade-medida/unidade-medida.mod
 import { CompraModule } from './modules/compra/compra.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/modules/auth/auth.module';
+import { ItensCarrinhoModule } from './modules/itens-carrinho/itens-carrinho.module';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritoModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule, AuthModule],
+    UsuarioModule, UfsModule, CidadesModule, LojaModule, CategoriaModule, ProdutoModule, MetodoPagamentoModule, StatusModule, CarrinhoModule, EnderecoModule, EstoqueModule, PerfilModule, EntregaModule, FavoritoModule, AvaliacaoModule, UnidadeMedidaModule, CompraModule, AuthModule, ItensCarrinhoModule],
   controllers: [AppController],
   providers: [AppService],
 })

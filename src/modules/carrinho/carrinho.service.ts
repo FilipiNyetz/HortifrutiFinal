@@ -2,75 +2,61 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarrinhoDto } from './dto/create-carrinho.dto';
 import { UpdateCarrinhoDto } from './dto/update-carrinho.dto';
 import { Carrinho } from './entities/carrinho.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ItemCarrinho } from '../itens-carrinho/entities/itens-carrinho.entity';
 import { Produto } from '../produto/entities/produto.entity';
 import { Estoque } from '../estoque/entities/estoque.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CarrinhoService {
   constructor(
     @InjectRepository(Carrinho)
     private readonly carrinhoRepository: Repository<Carrinho>,
+
     @InjectRepository(Produto)
     private readonly produtoRepository: Repository<Produto>,
+
+    @InjectRepository(ItemCarrinho)
+    private readonly itemCarrinhoRepository: Repository<ItemCarrinho>,
+
     @InjectRepository(Estoque)
     private readonly estoqueRepository: Repository<Estoque>,
-  ) {}
+  ) { }
 
   async create(dto: CreateCarrinhoDto) {
-    if (dto.idProduto) {
-      const produto = await this.produtoRepository.findOne({ 
-        where: { id: dto.idProduto } 
-      });
-      if (!produto) {
-        throw new NotFoundException(`Produto com ID ${dto.idProduto} não encontrado`);
-      }
-    }
-
     const carrinho = this.carrinhoRepository.create({
-      valorTotal: dto.valorTotal || 0,
-      quantidade: dto.quantidade || 0,
+      valorTotal: 0,
+      quantidade: 0,
+      itens: [],
     });
-
-    if (dto.idProduto) {
-      const produto = await this.produtoRepository.findOne({ 
-        where: { id: dto.idProduto } 
-      });
-      if (produto) {
-        carrinho.produtos = [produto];
-      }
-    }
-
     return this.carrinhoRepository.save(carrinho);
   }
 
   findAll() {
-    return this.carrinhoRepository.find({ relations: ['produtos'] });
+    return this.carrinhoRepository.find({ relations: ['itens', 'itens.produto'] });
   }
 
   findOne(id: number) {
     return this.carrinhoRepository.findOne({
       where: { id_Carrinho: id },
-      relations: ['produtos'],
+      relations: ['itens', 'itens.produto'],
     });
   }
 
   async update(id: number, dto: UpdateCarrinhoDto) {
     const carrinho = await this.carrinhoRepository.findOne({
       where: { id_Carrinho: id },
-      relations: ['produtos'],
     });
-    
     if (!carrinho) {
       throw new NotFoundException('Carrinho não encontrado');
     }
 
-    if (dto.valorTotal !== undefined && dto.valorTotal !== null) {
-      carrinho.valorTotal = dto.valorTotal;
+    if (dto.valorTotal !== undefined) {
+      carrinho.valorTotal = dto.valorTotal ?? 0;
     }
-    if (dto.quantidade !== undefined && dto.quantidade !== null) {
-      carrinho.quantidade = dto.quantidade;
+    if (dto.quantidade !== undefined) {
+      carrinho.quantidade = dto.quantidade ?? 0;
     }
 
     return this.carrinhoRepository.save(carrinho);
@@ -79,43 +65,33 @@ export class CarrinhoService {
   async remove(id: number) {
     const carrinho = await this.carrinhoRepository.findOne({
       where: { id_Carrinho: id },
-      relations: ['produtos'],
+      relations: ['itens'],
     });
-    
     if (!carrinho) {
       throw new NotFoundException('Carrinho não encontrado');
     }
-
-    for (const produto of carrinho.produtos) {
-      produto.carrinho = null;
-      await this.produtoRepository.save(produto);
-    }
-
+    // Ao remover o carrinho, os itens em cascade serão removidos também
     return this.carrinhoRepository.remove(carrinho);
   }
 
   async addProduto(carrinhoId: number, produtoId: number, quantidade: number = 1) {
     const carrinho = await this.carrinhoRepository.findOne({
       where: { id_Carrinho: carrinhoId },
-      relations: ['produtos'],
+      relations: ['itens', 'itens.produto'],
     });
-    
+    if (!carrinho) {
+      throw new NotFoundException('Carrinho não encontrado');
+    }
+
     const produto = await this.produtoRepository.findOne({
       where: { id: produtoId },
       relations: ['loja'],
     });
-
-    if (!carrinho || !produto) {
-      throw new NotFoundException('Carrinho ou Produto não encontrado');
+    if (!produto) {
+      throw new NotFoundException('Produto não encontrado');
     }
 
-    // Verifica se o produto já está no carrinho
-    const produtoNoCarrinho = carrinho.produtos.find(p => p.id === produtoId);
-    if (produtoNoCarrinho) {
-      throw new NotFoundException('Produto já está no carrinho');
-    }
-
-    // Consulta estoque para o produto na loja correspondente
+    // Verifica estoque
     const estoque = await this.estoqueRepository.findOne({
       where: {
         produto: { id: produtoId },
@@ -128,75 +104,93 @@ export class CarrinhoService {
       throw new NotFoundException('Quantidade indisponível em estoque');
     }
 
+    // Verifica se produto já está no carrinho
+    let item = carrinho.itens.find(i => i.produto.id === produtoId);
+    if (item) {
+      // Atualiza quantidade do item no carrinho
+      item.quantidade += quantidade;
+    } else {
+      // Cria novo item
+      item = this.itemCarrinhoRepository.create({
+        carrinho,
+        produto,
+        quantidade,
+      });
+      carrinho.itens.push(item);
+    }
+
     // Atualiza estoque
     estoque.quantidade -= quantidade;
     await this.estoqueRepository.save(estoque);
 
-    // Adiciona o produto ao carrinho
-    carrinho.produtos.push(produto);
-    produto.carrinho = carrinho;
+    // Recalcula total e quantidade
+    await this.itemCarrinhoRepository.save(item);
+    await this.recalcularCarrinho(carrinho);
 
-    // Atualiza valor total e quantidade do carrinho
-    carrinho.valorTotal = carrinho.produtos.reduce((total, p) => total + (p.valor * quantidade), 0);
-    carrinho.quantidade += quantidade;
-
-    await this.produtoRepository.save(produto);
     return this.carrinhoRepository.save(carrinho);
   }
 
-  async removeProduto(carrinhoId: number, produtoId: number) {
+  async removeProduto(carrinhoId: number, produtoId: number, quantidade: number = 1) {
     const carrinho = await this.carrinhoRepository.findOne({
       where: { id_Carrinho: carrinhoId },
-      relations: ['produtos'],
+      relations: ['itens', 'itens.produto', 'itens.produto.loja'],
     });
-    
     if (!carrinho) {
       throw new NotFoundException('Carrinho não encontrado');
     }
 
-    const produtoIndex = carrinho.produtos.findIndex(p => p.id === produtoId);
-    if (produtoIndex === -1) {
+    const item = carrinho.itens.find(i => i.produto.id === produtoId);
+    if (!item) {
       throw new NotFoundException('Produto não encontrado no carrinho');
     }
 
-    const [produtoRemovido] = carrinho.produtos.splice(produtoIndex, 1);
-    const quantidadeRemovida = 1; // valor fixo, ajustar se necessário
+    if (quantidade >= item.quantidade) {
+      // Remove o item inteiro
+      carrinho.itens = carrinho.itens.filter(i => i.produto.id !== produtoId);
+      await this.itemCarrinhoRepository.remove(item);
+    } else {
+      // Decrementa a quantidade
+      item.quantidade -= quantidade;
+      await this.itemCarrinhoRepository.save(item);
+    }
 
-    // Atualiza estoque devolvendo a quantidade
-    const estoqueRemovido = await this.estoqueRepository.findOne({
+    // Atualiza estoque devolvendo a quantidade removida
+    const estoque = await this.estoqueRepository.findOne({
       where: {
-        produto: { id: produtoRemovido.id },
-        loja: { id_Loja: produtoRemovido.loja.id_Loja },
+        produto: { id: produtoId },
+        loja: { id_Loja: item.produto.loja.id_Loja },
       },
       relations: ['produto', 'loja'],
     });
-
-    if (estoqueRemovido) {
-      estoqueRemovido.quantidade += quantidadeRemovida;
-      await this.estoqueRepository.save(estoqueRemovido);
+    if (estoque) {
+      estoque.quantidade += quantidade;
+      await this.estoqueRepository.save(estoque);
     }
 
-    produtoRemovido.carrinho = null;
+    // Recalcula total e quantidade do carrinho
+    await this.recalcularCarrinho(carrinho);
 
-    // Atualiza valor total e quantidade do carrinho
-    carrinho.valorTotal = carrinho.produtos.reduce((total, p) => total + p.valor, 0);
-    carrinho.quantidade -= quantidadeRemovida;
-
-    await this.produtoRepository.save(produtoRemovido);
     return this.carrinhoRepository.save(carrinho);
   }
 
-  async calcularTotal(carrinhoId: number) {
-    const carrinho = await this.carrinhoRepository.findOne({
-      where: { id_Carrinho: carrinhoId },
-      relations: ['produtos'],
+  private async recalcularCarrinho(carrinho: Carrinho) {
+    // Recarrega os itens para garantir dados atualizados
+    const itens = await this.itemCarrinhoRepository.find({
+      where: { carrinho: { id_Carrinho: carrinho.id_Carrinho } },
+      relations: ['produto'],
     });
 
-    if (!carrinho) {
-      throw new NotFoundException('Carrinho não encontrado');
-    }
+    const valorTotal = itens.reduce(
+      (total, item) => total + item.produto.valor * item.quantidade,
+      0,
+    );
+    const quantidadeTotal = itens.reduce((total, item) => total + item.quantidade, 0);
 
-    carrinho.valorTotal = carrinho.produtos.reduce((total, p) => total + p.valor, 0);
-    return this.carrinhoRepository.save(carrinho);
+    carrinho.valorTotal = valorTotal;
+    carrinho.quantidade = quantidadeTotal;
+
+    carrinho.itens = itens;
+
+    await this.carrinhoRepository.save(carrinho);
   }
 }

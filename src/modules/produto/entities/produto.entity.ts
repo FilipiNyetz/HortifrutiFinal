@@ -4,6 +4,7 @@ import { Categoria } from "src/modules/categoria/entities/categoria.entity";
 import { Carrinho } from '../../carrinho/entities/carrinho.entity';
 import { Exclude } from 'class-transformer';
 import { Favorito } from "src/modules/favoritos/entities/favorito.entity";
+import { ItemCarrinho } from "src/modules/itens-carrinho/entities/itens-carrinho.entity";
 
 @Entity('produto')
 export class Produto {
@@ -32,14 +33,9 @@ export class Produto {
     @JoinColumn({ name: 'categoria_id' })
     categoria: Categoria;
 
-    @ManyToOne(() => Carrinho, (carrinho) => carrinho.produtos, {
-        onDelete: 'SET NULL',
-        nullable: true
-    })
-    @Exclude() // Evita a serialização circular
-    @JoinColumn({ name: 'carrinho_id' })
-    carrinho: Carrinho | null;
-
     @OneToMany(() => Favorito, (favorito) => favorito.produto)
     favoritos: Favorito[];
+
+    @OneToMany(() => ItemCarrinho, itemCarrinho => itemCarrinho.produto)
+    itensCarrinho: ItemCarrinho[];
 }
