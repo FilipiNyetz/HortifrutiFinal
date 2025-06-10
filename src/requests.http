@@ -52,7 +52,7 @@ POST http://localhost:3000/endereco
 Content-Type: application/json
 
 {
-  "cep": "7150690",
+  "cep": "777777",
   "rua": "Rua 3",
   "complemento": "26",
   "id_Cidade":1

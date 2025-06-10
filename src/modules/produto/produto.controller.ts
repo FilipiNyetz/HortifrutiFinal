@@ -6,21 +6,29 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';  // seu guard para valida
 import { RolesGuard } from '../auth/roles.guard';       // seu guard para validar roles
 import { Roles } from '../auth/roles.decorator';        // decorator para roles
 import { UserRole } from '../usuario/entities/usuario.entity';
+import { Produto } from './entities/produto.entity';
 
 @Controller('produto')
-@UseGuards(JwtAuthGuard, RolesGuard) // Aplica os guards no controller inteiro
-@Roles(UserRole.LOJISTA)
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) { }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.LOJISTA)
   @Post()
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtoService.create(createProdutoDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('loja/:id_loja')
-  findAll(@Param('id_loja', ParseIntPipe) id_loja: number) {
-    return this.produtoService.findAll(id_loja);
+  findAllByLoja(@Param('id_loja', ParseIntPipe) id_loja: number) {
+    return this.produtoService.findAllByLoja(id_loja);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findAll(): Promise<Produto[]> {
+    return this.produtoService.findAll();
   }
 
   @Get(':id')
@@ -28,11 +36,15 @@ export class ProdutoController {
     return this.produtoService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.LOJISTA)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
     return this.produtoService.update(+id, updateProdutoDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.LOJISTA)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.produtoService.remove(+id);

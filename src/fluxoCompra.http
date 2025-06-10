@@ -1,0 +1,40 @@
+### Listar todos os produtos disponíveis
+GET http://localhost:3000/produto
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyMzI2NSwiZXhwIjoxNzQ5NTI2ODY1fQ.AWMyc-oUVD8zW_HWHtw8NfoEm5kXfEbor3h0X5cqjmE
+
+###
+
+### Criar um novo carrinho
+POST http://localhost:3000/carrinho
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyMzI2NSwiZXhwIjoxNzQ5NTI2ODY1fQ.AWMyc-oUVD8zW_HWHtw8NfoEm5kXfEbor3h0X5cqjmE
+
+{
+  "valorTotal": 0,
+  "quantidade": 0
+}
+
+###
+
+### Adicionar um item ao carrinho (ItemCarrinho)
+POST http://localhost:3000/itens-carrinho
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyMzI2NSwiZXhwIjoxNzQ5NTI2ODY1fQ.AWMyc-oUVD8zW_HWHtw8NfoEm5kXfEbor3h0X5cqjmE
+
+{
+  "carrinhoId": 1,
+  "produtoId": 1,
+  "quantidade": 8
+}
+
+###
+
+### Visualizar itens do carrinho
+GET http://localhost:3000/itens-carrinho
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyMzI2NSwiZXhwIjoxNzQ5NTI2ODY1fQ.AWMyc-oUVD8zW_HWHtw8NfoEm5kXfEbor3h0X5cqjmE
+
+###
+
+### Visualizar carrinho com totais atualizados
+GET http://localhost:3000/carrinho/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyMzI2NSwiZXhwIjoxNzQ5NTI2ODY1fQ.AWMyc-oUVD8zW_HWHtw8NfoEm5kXfEbor3h0X5cqjmE

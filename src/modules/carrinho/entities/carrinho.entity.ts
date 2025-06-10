@@ -12,6 +12,7 @@ export class Carrinho {
     @Column({ type: 'int', default: 0 })
     quantidade: number;
 
-    @OneToMany(() => ItemCarrinho, itemCarrinho => itemCarrinho.carrinho, { cascade: true })
+    @OneToMany(() => ItemCarrinho, item => item.carrinho, { cascade: true, eager: true })
     itens: ItemCarrinho[];
+
 }

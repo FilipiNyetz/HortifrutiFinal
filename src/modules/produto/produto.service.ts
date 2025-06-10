@@ -18,7 +18,7 @@ export class ProdutoService {
 
     @InjectRepository(Categoria)
     private readonly categoriaRepository: Repository<Categoria>,
-  ) {}
+  ) { }
 
   async create(dto: CreateProdutoDto) {
     const loja = await this.lojaRepository.findOneBy({ id_Loja: dto.id_loja });
@@ -40,11 +40,15 @@ export class ProdutoService {
     return this.produtoRepository.save(produto);
   }
 
-  async findAll(id_Loja: number) {
+  async findAllByLoja(id_Loja: number) {
     return this.produtoRepository.find({
       where: { loja: { id_Loja: id_Loja } },
       relations: ['loja', 'categoria'],
     });
+  }
+
+  async findAll(): Promise<Produto[]> {
+    return this.produtoRepository.find();
   }
 
   async findOne(id: number) {

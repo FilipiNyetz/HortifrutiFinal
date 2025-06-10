@@ -1,13 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ItensCarrinhoService } from './itens-carrinho.service';
 import { ItemCarrinho } from './entities/itens-carrinho.entity';
+import { CreateItensCarrinhoDto } from './dto/create-itens-carrinho.dto';
 
 @Controller('itens-carrinho')
 export class ItensCarrinhoController {
   constructor(private readonly itensCarrinhoService: ItensCarrinhoService) { }
 
   @Post()
-  create(@Body() data: Partial<ItemCarrinho>) {
+  create(@Body() data: CreateItensCarrinhoDto) {
     return this.itensCarrinhoService.create(data);
   }
 

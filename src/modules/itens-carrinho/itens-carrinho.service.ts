@@ -2,18 +2,55 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemCarrinho } from './entities/itens-carrinho.entity';
+import { Carrinho } from '../carrinho/entities/carrinho.entity';
+import { Produto } from '../produto/entities/produto.entity';
+import { CreateItensCarrinhoDto } from './dto/create-itens-carrinho.dto';
 
 @Injectable()
 export class ItensCarrinhoService {
   constructor(
     @InjectRepository(ItemCarrinho)
     private readonly itensCarrinhoRepository: Repository<ItemCarrinho>,
+
+    @InjectRepository(Carrinho)
+    private readonly carrinhoRepository: Repository<Carrinho>,
+
+    @InjectRepository(Produto)
+    private readonly produtoRepository: Repository<Produto>,
   ) { }
 
-  async create(data: Partial<ItemCarrinho>): Promise<ItemCarrinho> {
-    const item = this.itensCarrinhoRepository.create(data);
-    return this.itensCarrinhoRepository.save(item);
+  async create(data: CreateItensCarrinhoDto): Promise<ItemCarrinho> {
+    const carrinho = await this.carrinhoRepository.findOne({
+      where: { id_Carrinho: data.carrinhoId },
+      relations: ['itens'],
+    });
+
+    if (!carrinho) throw new NotFoundException('Carrinho não encontrado');
+
+    const produto = await this.produtoRepository.findOne({
+      where: { id: data.produtoId }
+    });
+
+    if (!produto) throw new NotFoundException('Produto não encontrado');
+
+    const item = this.itensCarrinhoRepository.create({
+      carrinho,
+      produto,
+      quantidade: data.quantidade,
+      precoUnitario: produto.valor
+    });
+
+    await this.itensCarrinhoRepository.save(item);
+
+    // Atualiza o carrinho
+    carrinho.valorTotal = (carrinho.valorTotal || 0) + produto.valor * data.quantidade;
+    carrinho.quantidade = (carrinho.quantidade || 0) + data.quantidade;
+
+    await this.carrinhoRepository.save(carrinho);
+
+    return item;
   }
+
 
   findAll(): Promise<ItemCarrinho[]> {
     return this.itensCarrinhoRepository.find({ relations: ['produto', 'carrinho'] });
