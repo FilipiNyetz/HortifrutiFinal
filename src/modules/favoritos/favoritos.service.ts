@@ -1,62 +1,112 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+ 
+ 
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Favorito } from './entities/favorito.entity';
-import { Repository } from 'typeorm';
-import { CreateFavoritoDto } from './dto/create-favorito.dto';
-import { Usuario } from 'src/modules/usuario/entities/usuario.entity';
-import { Produto } from 'src/modules/produto/entities/produto.entity';
+import { Repository, Not } from 'typeorm';
+import { Favorito } from '../favoritos/entities/favorito.entity';
+import { CreateFavoritoDto } from '../favoritos/dto/create-favorito.dto';
+import { Usuario } from '../usuario/entities/usuario.entity';
+import { Produto } from '../produto/entities/produto.entity';
+
+// importa o Favorito se ainda não estiver importado:
+// import { Favorito } from '../favoritos/entities/favorito.entity';
 
 @Injectable()
-export class FavoritoService {
+export class FavoritosService {
   constructor(
     @InjectRepository(Favorito)
-    private readonly favoritoRepository: Repository<Favorito>,
+    private favoritosRepository: Repository<Favorito>,
 
     @InjectRepository(Usuario)
-    private readonly usuarioRepository: Repository<Usuario>,
+    private usuarioRepository: Repository<Usuario>,
 
     @InjectRepository(Produto)
-    private readonly produtoRepository: Repository<Produto>,
-  ) { }
+    private produtoRepository: Repository<Produto>,
+  ) {}
 
-  async create(dto: CreateFavoritoDto): Promise<Favorito> {
-    const usuario = await this.usuarioRepository.findOne({ where: { id_usuario: dto.id_Usuario } });
-    const produto = await this.produtoRepository.findOne({ where: { id: dto.id_Produto } });
+  async favoritar(dto: CreateFavoritoDto): Promise<Favorito> {
+    const usuario = await this.usuarioRepository.findOneBy({ id_usuario: dto.id_Usuario });
+    if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
-    if (!usuario || !produto) {
-      throw new NotFoundException('Usuário ou Produto não encontrado');
-    }
+    const produto = await this.produtoRepository.findOneBy({ id: dto.id_Produto });
+    if (!produto) throw new NotFoundException('Produto não encontrado');
 
-    const favorito = this.favoritoRepository.create({
+    const existente = await this.favoritosRepository.findOne({
+      where: {
+        usuario: { id_usuario: dto.id_Usuario },
+        produto: { id: dto.id_Produto },
+      },
+    });
+
+    if (existente) throw new ConflictException('Produto já foi favoritado por esse usuário.');
+
+    const favorito = this.favoritosRepository.create({
       usuario,
       produto,
       data: new Date().toISOString(),
     });
 
-    return await this.favoritoRepository.save(favorito);
+    return this.favoritosRepository.save(favorito);
   }
 
+  // ✅ Método para buscar todos os favoritos
   async findAll(): Promise<Favorito[]> {
-    return await this.favoritoRepository.find({
+    return this.favoritosRepository.find({
       relations: ['usuario', 'produto'],
     });
   }
 
-  async findByUsuario(usuarioId: number): Promise<Favorito[]> {
-    return await this.favoritoRepository.find({
-      where: { usuario: { id_usuario: usuarioId } },
-      relations: ['produto'], // Se quiser os dados do produto
+  // ✅ Método para buscar favoritos de um usuário específico
+  async findByUsuario(id: number): Promise<Favorito[]> {
+    const usuario = await this.usuarioRepository.findOneBy({ id_usuario: id });
+    if (!usuario) throw new NotFoundException('Usuário não encontrado');
+
+    return this.favoritosRepository.find({
+      where: {
+        usuario: { id_usuario: id },
+      },
+      relations: ['produto'],
     });
   }
 
-  async remove(id: number): Promise<{ message: string }> {
-    const favorito = await this.favoritoRepository.findOne({ where: { id_Favorito: id } });
+  async update(id: number, dto: CreateFavoritoDto): Promise<Favorito> {
+  const favorito = await this.favoritosRepository.findOne({ where: { id_Favorito: id }, relations: ['usuario', 'produto'] });
+  if (!favorito) throw new NotFoundException('Favorito não encontrado');
 
-    if (!favorito) {
-      throw new NotFoundException('Favorito não encontrado');
-    }
+  const usuario = await this.usuarioRepository.findOneBy({ id_usuario: dto.id_Usuario });
+  if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
-    await this.favoritoRepository.remove(favorito);
-    return { message: 'Favorito removido com sucesso' };
+  const produto = await this.produtoRepository.findOneBy({ id: dto.id_Produto });
+  if (!produto) throw new NotFoundException('Produto não encontrado');
+
+  // Verificar se já existe outro favorito com esse usuário e produto para evitar duplicação
+  const existente = await this.favoritosRepository.findOne({
+    where: {
+      usuario: { id_usuario: dto.id_Usuario },
+      produto: { id: dto.id_Produto },
+      id_Favorito: Not(id), // Para ignorar o próprio registro que estamos atualizando
+    },
+  });
+
+  if (existente) throw new ConflictException('Produto já foi favoritado por esse usuário.');
+
+  favorito.usuario = usuario;
+  favorito.produto = produto;
+  favorito.data = new Date().toISOString();
+
+  return this.favoritosRepository.save(favorito);
+}
+
+
+  async remove(id: number): Promise<void> {
+    const favorito = await this.favoritosRepository.findOne({ where: { id_Favorito: id } });
+    if (!favorito) throw new NotFoundException('Favorito não encontrado');
+
+    await this.favoritosRepository.remove(favorito);
   }
 }

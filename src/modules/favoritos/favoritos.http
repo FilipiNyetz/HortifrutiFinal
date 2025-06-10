@@ -1,0 +1,8 @@
+### favoritar
+POST http://localhost:3000/favoritos
+Content-Type: application/json
+
+{
+  "id_Usuario": 1,
+   "id_Produto": 1
+}
