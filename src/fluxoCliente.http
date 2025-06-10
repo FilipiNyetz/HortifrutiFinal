@@ -1,0 +1,3 @@
+### Visualizar historico compra
+GET  http://localhost:3000/historico-compra/usuario/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiY2xpZW50ZTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc0OTUyNzc5NCwiZXhwIjoxNzQ5NTMxMzk0fQ.uvMuFpMjmjOMlule39tq-A-63tfJAawiM-PbNh6kx0E

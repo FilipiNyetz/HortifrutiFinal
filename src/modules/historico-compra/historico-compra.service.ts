@@ -26,21 +26,15 @@ export class HistoricoCompraService {
 
   async pagar(dto: CreateHistoricoCompraDto): Promise<HistoricoCompra> {
     const usuario = await this.usuarioRepository.findOne({ where: { id_usuario: dto.usuarioId } });
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
-    }
+    if (!usuario) throw new NotFoundException('Usuário não encontrado');
 
     const carrinho = await this.carrinhoRepository.findOne({ where: { id_Carrinho: dto.carrinhoId } });
-    if (!carrinho) {
-      throw new NotFoundException('Carrinho não encontrado');
-    }
+    if (!carrinho) throw new NotFoundException('Carrinho não encontrado');
 
     const metodoPagamento = await this.metodoPagamentoRepository.findOne({
       where: { usuario: { id_usuario: dto.usuarioId } },
     });
-    if (!metodoPagamento) {
-      throw new NotFoundException('Método de pagamento do usuário não encontrado');
-    }
+    if (!metodoPagamento) throw new NotFoundException('Método de pagamento do usuário não encontrado');
 
     const novaCompra = this.historicoCompraRepository.create({
       usuario,
@@ -53,4 +47,26 @@ export class HistoricoCompraService {
 
     return this.historicoCompraRepository.save(novaCompra);
   }
+
+  async findByUsuario(usuarioId: number): Promise<HistoricoCompra[]> {
+    const historicos = await this.historicoCompraRepository
+      .createQueryBuilder('hc')
+      .leftJoinAndSelect('hc.usuario', 'usuario')
+      .leftJoinAndSelect('usuario.endereco', 'endereco')
+      .leftJoinAndSelect('hc.carrinho', 'carrinho')
+      .leftJoinAndSelect('carrinho.itens', 'itens')
+      .leftJoinAndSelect('itens.produto', 'produto')
+      .leftJoinAndSelect('produto.categoria', 'categoria')
+      .leftJoinAndSelect('produto.loja', 'loja')
+      .leftJoinAndSelect('hc.metodoPagamento', 'metodoPagamento')
+      .where('usuario.id_usuario = :usuarioId', { usuarioId })
+      .getMany();
+
+    if (!historicos.length) {
+      throw new NotFoundException(`Nenhum histórico encontrado para o usuário ID ${usuarioId}`);
+    }
+
+    return historicos;
+  }
+
 }
