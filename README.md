@@ -9,6 +9,8 @@ npm install --save-dev @babel/core
 
 npm run start:dev
 
+# Explicação em vídeo
+https://youtu.be/zon6NXOg1V8
 
 # Para criar nova entidade
 Consultar o arquivo todo.md, lá tem passo a passo de como criar uma entidade nova (Sem relacionamentos por enquanto)
